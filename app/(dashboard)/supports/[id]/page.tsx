@@ -26,7 +26,7 @@ export default async function SupportDetailPage(
   return (
     <div className="grid gap-6">
       <PageHeader
-        description="문의 원문, 증빙 주소, 처리 메타데이터를 검토하고 해결 또는 기각을 확정합니다."
+        description="문의 원문, 증빙 주소, 처리 메타데이터를 검토한 뒤 처리 결과를 확정합니다."
         eyebrow={
           <Link
             className="admin-focus text-brand underline-offset-4 hover:underline"

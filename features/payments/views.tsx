@@ -62,7 +62,7 @@ function paymentRows(payments: readonly Payment[]): readonly AdminTableRow[] {
       <span className="whitespace-nowrap font-mono tabular-nums" key="amount">
         {formatKrw(payment.amountKrw)}
       </span>,
-      <span className="admin-break-anywhere" key="provider">
+      <span className="whitespace-nowrap" key="provider">
         {formatNullableText(payment.pgProvider)}
       </span>,
       <span className="whitespace-nowrap" key="paidAt">

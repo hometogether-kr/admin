@@ -38,7 +38,7 @@ export function UserTable({ users }: UserTableProps) {
         {displayOptionalText(user.name)}
       </Link>,
       <span
-        className={user.email === null ? "whitespace-nowrap" : "admin-break-anywhere"}
+        className="whitespace-nowrap"
         key="email"
       >
         {displayOptionalText(user.email)}

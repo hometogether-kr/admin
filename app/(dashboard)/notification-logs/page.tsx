@@ -84,7 +84,7 @@ export default async function NotificationLogsPage({
         {item.id}
       </Link>,
       CHANNEL_LABELS[item.channel],
-      <span className="admin-break-anywhere font-mono" key={`${item.id}-template`}>
+      <span className="whitespace-nowrap font-mono" key={`${item.id}-template`}>
         {item.templateCode}
       </span>,
       <Badge
