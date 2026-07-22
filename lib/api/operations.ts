@@ -20,7 +20,7 @@ export type AdminOperationDomain =
   | "supports"
   | "notificationLogs";
 
-type AdminOperation = {
+export type AdminOperationContract = {
   readonly id: string;
   readonly domain: AdminOperationDomain;
   readonly method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -74,6 +74,15 @@ export const ADMIN_OPERATIONS = [
   { id: "NOT-01", domain: "notificationLogs", method: "GET", path: "/admin/notification-logs", roles: ["admin", "csManager", "superAdmin"], successStatus: 200, response: "{items,total,page,limit}", query: ["page", "limit"], body: [], requestSource: "production-swagger", rolesSource: "local-controller" },
   { id: "NOT-02", domain: "notificationLogs", method: "GET", path: "/admin/notification-logs/{id}", roles: ["admin", "csManager", "superAdmin"], successStatus: 200, response: "MaskedNotificationLog", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },
   { id: "NOT-03", domain: "notificationLogs", method: "POST", path: "/admin/notification-logs/{id}/resend", roles: ["admin", "csManager", "superAdmin"], successStatus: 204, response: "void", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },
-] as const satisfies readonly AdminOperation[];
+] as const satisfies readonly AdminOperationContract[];
 
+export type AdminOperation = (typeof ADMIN_OPERATIONS)[number];
 export type AdminOperationId = (typeof ADMIN_OPERATIONS)[number]["id"];
+export type AdminReadOperationId = Extract<
+  AdminOperation,
+  { readonly method: "GET" }
+>["id"];
+export type AdminMutationOperationId = Exclude<
+  AdminOperationId,
+  AdminReadOperationId
+>;

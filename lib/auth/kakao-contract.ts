@@ -2,7 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 
-import { ADMIN_ROLES, type AdminRole } from "@/lib/api/operations";
+import { ADMIN_ROLES } from "@/lib/api/operations";
 import { env } from "@/lib/env";
 
 export const KAKAO_STATE_COOKIE_NAME = "kakao_oauth_state";
@@ -37,15 +37,6 @@ export const callbackEnvelopeSchema = z
       .readonly(),
   })
   .readonly();
-
-export const ROLE_DEFAULTS = {
-  admin: "/users",
-  superAdmin: "/users",
-  roomManager: "/rooms",
-  reservationManager: "/reservations",
-  paymentManager: "/payments",
-  csManager: "/reports",
-} as const satisfies Record<AdminRole, string>;
 
 export type KakaoCallbackInput = {
   readonly code: string;

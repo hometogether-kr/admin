@@ -1,17 +1,12 @@
-import { z } from "zod";
-
+import { hasValidMutationOrigin } from "@/lib/auth/same-origin";
 import { clearAdminSession } from "@/lib/auth/session";
-import { env } from "@/lib/env";
 
 const NO_STORE_HEADERS = {
   "Cache-Control": "no-store",
   Pragma: "no-cache",
 } as const;
-const allowedOriginSchema = z.literal(new URL(env.ADMIN_PUBLIC_ORIGIN).origin);
-
 export async function POST(request: Request): Promise<Response> {
-  const origin = allowedOriginSchema.safeParse(request.headers.get("origin"));
-  if (!origin.success) {
+  if (!hasValidMutationOrigin(request.headers)) {
     return new Response(null, { status: 403, headers: NO_STORE_HEADERS });
   }
 

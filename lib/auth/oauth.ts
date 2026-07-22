@@ -9,12 +9,12 @@ import {
   callbackEnvelopeSchema,
   KAKAO_CALLBACK_PATH,
   KAKAO_STATE_COOKIE_NAME,
-  ROLE_DEFAULTS,
   upstreamClearCookie,
   validStateSetCookie,
   validatedOAuthLocation,
   type KakaoCallbackInput,
 } from "@/lib/auth/kakao-contract";
+import { ADMIN_ROLE_DEFAULT_ROUTES } from "@/lib/auth/roles";
 import { sealAdminSession } from "@/lib/auth/session";
 import type { SealedAdminSession } from "@/lib/auth/session-schema";
 import { env } from "@/lib/env";
@@ -199,7 +199,7 @@ export async function completeKakaoOAuth(
     });
     return {
       ok: true,
-      redirectTo: ROLE_DEFAULTS[role.data],
+      redirectTo: ADMIN_ROLE_DEFAULT_ROUTES[role.data],
       sealedSession,
       stateClearCookie,
     };
