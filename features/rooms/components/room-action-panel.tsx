@@ -44,7 +44,8 @@ export function RoomActionPanel({
           관리 작업
         </h2>
         <p className="text-body text-ink-subtle">
-          모든 변경은 확인 후 실행되며 목록과 상세 화면에 즉시 반영됩니다.
+          모든 변경은 확인 후 실행되며 목록과 상세 화면에{" "}
+          <span className="whitespace-nowrap">즉시 반영됩니다.</span>
         </p>
       </div>
       <div className="grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-3">

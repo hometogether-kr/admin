@@ -5,11 +5,13 @@ import {
   cloneElement,
   isValidElement,
   useActionState,
+  useEffect,
   useRef,
   useState,
   type ReactNode,
   type SyntheticEvent,
 } from "react";
+import { useRouter } from "next/navigation";
 
 import { ActionFeedback } from "@/components/admin/action-feedback";
 import { Button, type ButtonVariant } from "@/components/ui/button";
@@ -52,6 +54,7 @@ export function ConfirmedAction({
   triggerVariant,
   trimmedRequiredField,
 }: ConfirmedActionProps) {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -60,6 +63,19 @@ export function ConfirmedAction({
     action,
     INITIAL_ADMIN_ACTION_RESULT,
   );
+
+  useEffect(() => {
+    switch (result.kind) {
+      case "success":
+        router.refresh();
+        return;
+      case "idle":
+      case "error":
+        return;
+      default:
+        result satisfies never;
+    }
+  }, [result, router]);
 
   function closeDialog() {
     dialogRef.current?.close();
