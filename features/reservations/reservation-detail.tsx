@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { DefinitionList, type DefinitionItem } from "@/components/ui/definition-list";
@@ -20,10 +20,15 @@ import type { Reservation } from "@/features/reservations/schemas";
 import {
   NotificationResendForm,
   ReservationStatusForm,
+  type StatusUpdateContext,
 } from "@/features/reservations/reservation-actions";
 
 type ReservationDetailProps = {
   readonly reservation: Reservation;
+};
+
+type StatusOverride = StatusUpdateContext & {
+  readonly value: Reservation["reservationStatus"];
 };
 
 function displayText(value: string | null | undefined): string {
@@ -50,8 +55,23 @@ function displayChecklistState(value: boolean | undefined): string {
 }
 
 export function ReservationDetail({ reservation }: ReservationDetailProps) {
-  const [currentStatus, setCurrentStatus] = useState(
-    reservation.reservationStatus,
+  const [statusOverride, setStatusOverride] = useState<StatusOverride | null>(
+    null,
+  );
+  const currentStatus =
+    statusOverride !== null &&
+    (statusOverride.base === reservation.reservationStatus ||
+      statusOverride.previous === reservation.reservationStatus)
+      ? statusOverride.value
+      : reservation.reservationStatus;
+  const handleStatusUpdated = useCallback(
+    (
+      context: StatusUpdateContext,
+      value: Reservation["reservationStatus"],
+    ): void => {
+      setStatusOverride({ ...context, value });
+    },
+    [],
   );
   const statusLabel = RESERVATION_STATUS_LABELS[currentStatus];
   const summaryItems: readonly DefinitionItem[] = [
@@ -210,8 +230,9 @@ export function ReservationDetail({ reservation }: ReservationDetailProps) {
             </p>
           </div>
           <ReservationStatusForm
+            baseStatus={reservation.reservationStatus}
             currentStatus={currentStatus}
-            onStatusUpdated={setCurrentStatus}
+            onStatusUpdated={handleStatusUpdated}
             reservationId={reservation.id}
           />
         </section>

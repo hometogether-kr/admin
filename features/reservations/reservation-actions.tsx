@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent, SyntheticEvent } from "react";
 import { useRouter } from "next/navigation";
 
@@ -8,10 +8,7 @@ import { ActionFeedback } from "@/components/admin/action-feedback";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  INITIAL_ADMIN_ACTION_RESULT,
-  type AdminActionResult,
-} from "@/lib/actions/result";
+import { INITIAL_ADMIN_ACTION_RESULT, type AdminActionResult } from "@/lib/actions/result";
 
 import {
   isTerminalReservationStatus,
@@ -21,15 +18,18 @@ import {
   RESERVATION_STATUSES,
   type ReservationStatus,
 } from "@/features/reservations/constants";
-import {
-  resendReservationNotification,
-  updateReservationStatus,
-} from "@/features/reservations/actions";
+import { resendReservationNotification, updateReservationStatus } from "@/features/reservations/actions";
 
 type ReservationActionProps = {
+  readonly baseStatus: ReservationStatus;
   readonly reservationId: string;
   readonly currentStatus: ReservationStatus;
-  readonly onStatusUpdated: (status: ReservationStatus) => void;
+  readonly onStatusUpdated: (context: StatusUpdateContext, status: ReservationStatus) => void;
+};
+
+export type StatusUpdateContext = {
+  readonly base: ReservationStatus;
+  readonly previous: ReservationStatus;
 };
 
 const statusOptions = RESERVATION_STATUSES.map((value) => ({
@@ -54,25 +54,55 @@ function useBoundActionResult<Action extends (
   return useActionState(boundAction, INITIAL_ADMIN_ACTION_RESULT);
 }
 
+function parseReservationStatus(value: FormDataEntryValue | null): ReservationStatus | null {
+  if (typeof value !== "string") return null;
+  return RESERVATION_STATUSES.find((candidate) => candidate === value) ?? null;
+}
+
 export function ReservationStatusForm({
+  baseStatus,
   currentStatus,
   onStatusUpdated,
   reservationId,
 }: ReservationActionProps) {
-  const [result, formAction, pending] = useBoundActionResult(
-    updateReservationStatus,
-    reservationId,
-  );
   const router = useRouter();
+  const submittedStatusContextRef = useRef<StatusUpdateContext>({ base: baseStatus, previous: currentStatus });
+  const shouldRefreshRef = useRef(false);
+  const updateStatus = useCallback(
+    async (previousState: AdminActionResult, formData: FormData): Promise<AdminActionResult> => {
+      shouldRefreshRef.current = false;
+      const status = parseReservationStatus(formData.get("status"));
+      const submittedContext = submittedStatusContextRef.current;
+      const nextResult = await updateReservationStatus(
+        reservationId,
+        previousState,
+        formData,
+      );
+      if (nextResult.kind === "success" && status !== null) {
+        onStatusUpdated(submittedContext, status);
+        shouldRefreshRef.current = true;
+      }
+      return nextResult;
+    },
+    [onStatusUpdated, reservationId],
+  );
+  const [result, formAction, pending] = useActionState(updateStatus, INITIAL_ADMIN_ACTION_RESULT);
+  const statusResult: AdminActionResult =
+    result.kind === "error" && result.message === "다른 변경과 충돌했습니다. 새로고침 후 다시 시도해 주세요."
+      ? { kind: "error", message: "변경이 충돌했습니다. 새로고침 후 재시도해 주세요." }
+      : result;
   const formRef = useRef<HTMLFormElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
   const confirmationInputRef = useRef<HTMLInputElement>(null);
-  const [pendingStatus, setPendingStatus] = useState<ReservationStatus | null>(
-    null,
-  );
+  const [pendingStatus, setPendingStatus] = useState<ReservationStatus | null>(null);
   const confirmedStatusRef = useRef<ReservationStatus | null>(null);
-  const submittedStatusRef = useRef<ReservationStatus | null>(null);
+
+  useEffect(() => {
+    if (pending || result.kind !== "success" || !shouldRefreshRef.current) return;
+    const frame = requestAnimationFrame(() => { shouldRefreshRef.current = false; router.refresh(); });
+    return () => cancelAnimationFrame(frame);
+  }, [pending, result, router]);
 
   useEffect(() => {
     if (pending) return;
@@ -82,13 +112,6 @@ export function ReservationStatusForm({
     }
   }, [pending]);
 
-  useEffect(() => {
-    if (result.kind !== "success") return;
-    const status = submittedStatusRef.current;
-    if (status !== null) onStatusUpdated(status);
-    router.refresh();
-  }, [onStatusUpdated, result, router]);
-
   function openConfirmation(status: ReservationStatus): void {
     setPendingStatus(status);
     if (dialogRef.current?.open !== true) dialogRef.current?.showModal();
@@ -97,23 +120,21 @@ export function ReservationStatusForm({
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     const statusControl = event.currentTarget.elements.namedItem("status");
     if (!(statusControl instanceof HTMLSelectElement)) return;
-    const status = RESERVATION_STATUSES.find(
-      (candidate) => candidate === statusControl.value,
-    );
-    if (status === undefined) return;
-    submittedStatusRef.current = status;
+    const status = parseReservationStatus(statusControl.value);
+    if (status === null) return;
     if (
       isTerminalReservationStatus(status) &&
       confirmedStatusRef.current !== status
     ) {
       event.preventDefault();
       openConfirmation(status);
+      return;
     }
+    submittedStatusContextRef.current = { base: baseStatus, previous: currentStatus };
   }
 
   function handleStatusChange(): void {
     confirmedStatusRef.current = null;
-    submittedStatusRef.current = null;
     if (confirmationInputRef.current !== null) {
       confirmationInputRef.current.value = "false";
     }
@@ -124,7 +145,6 @@ export function ReservationStatusForm({
     const form = formRef.current;
     if (status === null || form === null) return;
     confirmedStatusRef.current = status;
-    submittedStatusRef.current = status;
     if (confirmationInputRef.current !== null) {
       confirmationInputRef.current.value = "true";
     }
@@ -178,7 +198,7 @@ export function ReservationStatusForm({
           type="hidden"
         />
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <ActionFeedback result={result} />
+          <ActionFeedback result={statusResult} />
           <Button loading={pending} ref={submitRef} type="submit" variant="primary">
             상태 저장
           </Button>
