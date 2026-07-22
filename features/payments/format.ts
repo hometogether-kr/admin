@@ -25,3 +25,17 @@ export function formatNullableText(value: string | null): string {
     ? "없음"
     : normalized;
 }
+
+export function formatPaymentProvider(value: string | null): string {
+  switch (value?.trim()) {
+    case undefined:
+    case "":
+      return "없음";
+    case "stub":
+      return "테스트 결제 제공자";
+    case "toss":
+      return "토스페이먼츠";
+    default:
+      return "알 수 없는 결제 제공자";
+  }
+}

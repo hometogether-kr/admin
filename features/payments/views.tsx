@@ -16,6 +16,7 @@ import {
   formatDateTime,
   formatKrw,
   formatNullableText,
+  formatPaymentProvider,
 } from "@/features/payments/format";
 import type { Payment } from "@/features/payments/schema";
 
@@ -63,7 +64,7 @@ function paymentRows(payments: readonly Payment[]): readonly AdminTableRow[] {
         {formatKrw(payment.amountKrw)}
       </span>,
       <span className="whitespace-nowrap" key="provider">
-        {formatNullableText(payment.pgProvider)}
+        {formatPaymentProvider(payment.pgProvider)}
       </span>,
       <span className="whitespace-nowrap" key="paidAt">
         {formatDateTime(payment.paidAt)}
@@ -149,7 +150,7 @@ export function PaymentDetailView({ payment }: { readonly payment: Payment }) {
     },
     {
       label: "결제 제공자",
-      value: formatNullableText(payment.pgProvider),
+      value: formatPaymentProvider(payment.pgProvider),
     },
     {
       label: "PG 거래 ID",
