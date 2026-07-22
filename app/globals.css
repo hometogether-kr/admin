@@ -29,6 +29,8 @@
   --ht-error-soft: #fff0f1;
   --ht-info-default: #126a8c;
   --ht-info-soft: #eaf6fa;
+  --ht-kakao-action: #fee500;
+  --ht-kakao-action-hover: #f5dc00;
   --ht-space-1: 0.25rem;
   --ht-space-2: 0.5rem;
   --ht-space-3: 0.75rem;
@@ -92,6 +94,8 @@
   --color-negative-soft: var(--ht-error-soft);
   --color-information: var(--ht-info-default);
   --color-information-soft: var(--ht-info-soft);
+  --color-kakao: var(--ht-kakao-action);
+  --color-kakao-hover: var(--ht-kakao-action-hover);
   --font-sans: var(--ht-font-sans);
   --font-mono: var(--ht-font-mono);
   --radius-control: var(--ht-radius-control);
@@ -234,6 +238,10 @@
   .admin-dialog[open] {
     animation: admin-dialog-in var(--ht-motion-standard) var(--ht-motion-easing);
   }
+
+  .admin-drawer[open] {
+    animation: admin-drawer-in var(--ht-motion-standard) var(--ht-motion-easing);
+  }
 }
 
 @keyframes admin-spin {
@@ -251,6 +259,16 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes admin-drawer-in {
+  from {
+    transform: translateX(calc(-1 * var(--ht-space-4)));
+  }
+
+  to {
+    transform: translateX(0);
   }
 }
 

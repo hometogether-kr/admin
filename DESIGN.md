@@ -49,12 +49,14 @@ The shipping system is light-only. There is no dark-mode token set or color-sche
 | Error soft | `--ht-error-soft` | `#FFF0F1` | Error badge/alert background |
 | Info | `--ht-info-default` | `#126A8C` | Non-action informational state |
 | Info soft | `--ht-info-soft` | `#EAF6FA` | Information badge/alert background |
+| Kakao action | `--ht-kakao-action` | `#FEE500` | Kakao provider login action only |
+| Kakao action hover | `--ht-kakao-action-hover` | `#F5DC00` | Hovered Kakao provider action only |
 
 ### Rules
 
 - Cobalt is the only product accent. Use it for interaction and selected state, never decorative fill.
 - Success, warning, error, and info are semantic colors, not alternate brand accents. Every semantic state also has text/icon wording and never relies on color alone.
-- Kakao yellow is reserved for the future Kakao provider login button in Todo 6. It is not a general token, primitive variant, navigation color, status color, or showcase decoration.
+- Kakao yellow is reserved for the Kakao provider login button. It is not a general token, primitive variant, navigation color, status color, or showcase decoration.
 - Primary surfaces remain white or cool neutral. Large chromatic panels, gradients, glass, and ambient glows are prohibited.
 - Do not introduce raw color values in components. Add a genuine semantic role here first.
 
