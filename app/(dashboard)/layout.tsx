@@ -52,7 +52,7 @@ export default async function DashboardLayout({
       >
         본문으로 건너뛰기
       </a>
-      <div className="grid h-[100dvb] min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-canvas lg:grid-cols-[auto_minmax(0,1fr)] lg:grid-rows-1">
+      <div className="fixed inset-0 grid h-[100dvb] min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden bg-canvas lg:grid-cols-[auto_minmax(0,1fr)] lg:grid-rows-1">
         <ShellNavigation items={navigationItems} />
         <div className="flex min-h-0 min-w-0 flex-col">
           <header className="flex min-h-touch shrink-0 items-center justify-between gap-4 border-b border-line-subtle bg-surface px-5 py-2 sm:px-6">
