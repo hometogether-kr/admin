@@ -14,6 +14,10 @@ import {
   ADMIN_ROLE_MENUS,
   roleCanAccessMenu,
 } from "@/lib/auth/roles";
+import {
+  ADMIN_RETURN_TO_REQUEST_HEADER,
+  normalizeReturnTo,
+} from "@/lib/auth/return-to";
 import { readAdminSession } from "@/lib/auth/session";
 
 type DashboardLayoutProps = {
@@ -23,11 +27,26 @@ type DashboardLayoutProps = {
 export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
+  const requestHeaders = await headers();
   const sessionResult = await readAdminSession();
-  if (sessionResult.kind !== "valid") redirect("/");
+  switch (sessionResult.kind) {
+    case "valid":
+      break;
+    case "missing":
+      redirect("/");
+    case "invalid":
+    case "expired": {
+      const returnTo = normalizeReturnTo(
+        requestHeaders.get(ADMIN_RETURN_TO_REQUEST_HEADER),
+      );
+      redirect(`/auth/refresh?${new URLSearchParams({ returnTo })}`);
+    }
+    default:
+      sessionResult satisfies never;
+  }
 
   const { displayName, role } = sessionResult.session;
-  const requestedMenuId = (await headers()).get(ADMIN_MENU_REQUEST_HEADER);
+  const requestedMenuId = requestHeaders.get(ADMIN_MENU_REQUEST_HEADER);
   const requestedMenu = ADMIN_MENU_ITEMS.find(
     (item) => item.id === requestedMenuId,
   );

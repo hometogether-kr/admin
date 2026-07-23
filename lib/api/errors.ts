@@ -1,6 +1,6 @@
 import "server-only";
 
-import { adminActionFailure, type AdminActionResult } from "@/lib/actions/result";
+import { adminActionFailure, type AdminActionError } from "@/lib/actions/result";
 import type { AdminOperationId } from "@/lib/api/operations";
 
 export const ADMIN_API_ERROR_KINDS = [
@@ -59,7 +59,7 @@ const STATUS_ACTION_MESSAGES = {
   422: "입력값을 확인해 주세요.",
 } as const;
 
-export function adminApiFailureResult(error: AdminApiError): AdminActionResult {
+export function adminApiFailureResult(error: AdminApiError): AdminActionError {
   // Upstream bodies and internal causes stay server-side; clients receive stable Korean copy.
   if (error.kind === "http" || error.kind === "refresh") {
     switch (error.status) {

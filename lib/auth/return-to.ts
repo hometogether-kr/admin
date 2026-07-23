@@ -2,6 +2,9 @@ import "server-only";
 
 import { z } from "zod";
 
+export const ADMIN_RETURN_TO_REQUEST_HEADER =
+  "x-hometogether-admin-return-to";
+
 type ListRouteRule = {
   readonly path: string;
   readonly queryKeys: readonly string[];

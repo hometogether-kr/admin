@@ -7,7 +7,8 @@ import {
   adminActionFailure,
   type AdminActionResult,
 } from "@/lib/actions/result";
-import { mutateAdminApi, type AdminJsonBody } from "@/lib/api/client";
+import { runAdminMutationAction } from "@/lib/actions/mutation";
+import type { AdminJsonBody } from "@/lib/api/client";
 import type { AdminMutationOperationId } from "@/lib/api/operations";
 import { supportSchema } from "@/features/supports/schema";
 
@@ -43,37 +44,38 @@ type SupportMutationInput = {
 async function mutateSupport(
   input: SupportMutationInput,
 ): Promise<AdminActionResult> {
-  const parsed = supportActionInputSchema.safeParse({
-    supportId: input.supportId,
-    resolution: input.formData.get("resolution"),
-    adminNote: input.formData.get("adminNote"),
-  });
-  if (!parsed.success) {
-    const fields = parsed.error.flatten().fieldErrors;
-    return adminActionFailure(
-      fields.resolution?.[0] ??
-        fields.adminNote?.[0] ??
-        "입력 내용을 확인해 주세요.",
-    );
-  }
+  return runAdminMutationAction(input.operationId, ({ mutate }) => {
+    const parsed = supportActionInputSchema.safeParse({
+      supportId: input.supportId,
+      resolution: input.formData.get("resolution"),
+      adminNote: input.formData.get("adminNote"),
+    });
+    if (!parsed.success) {
+      const fields = parsed.error.flatten().fieldErrors;
+      return adminActionFailure(
+        fields.resolution?.[0] ??
+          fields.adminNote?.[0] ??
+          "입력 내용을 확인해 주세요.",
+      );
+    }
 
-  const body = {
-    resolution: parsed.data.resolution,
-    ...(parsed.data.adminNote === undefined
-      ? {}
-      : { adminNote: parsed.data.adminNote }),
-  } satisfies AdminJsonBody;
+    const body = {
+      resolution: parsed.data.resolution,
+      ...(parsed.data.adminNote === undefined
+        ? {}
+        : { adminNote: parsed.data.adminNote }),
+    } satisfies AdminJsonBody;
 
-  return mutateAdminApi({
-    operationId: input.operationId,
-    pathParameters: { id: parsed.data.supportId },
-    body,
-    responseSchema: supportSchema,
-    revalidatePaths: [
-      "/supports",
-      `/supports/${parsed.data.supportId}`,
-    ],
-    successMessage: input.successMessage,
+    return mutate({
+      pathParameters: { id: parsed.data.supportId },
+      body,
+      responseSchema: supportSchema,
+      revalidatePaths: [
+        "/supports",
+        `/supports/${parsed.data.supportId}`,
+      ],
+      successMessage: input.successMessage,
+    });
   });
 }
 

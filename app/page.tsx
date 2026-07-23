@@ -47,8 +47,16 @@ function authErrorCopy(value: string | readonly string[] | undefined): string | 
 
 export default async function Home({ searchParams }: HomePageProps) {
   const sessionResult = await readAdminSession();
-  if (sessionResult.kind === "valid") {
-    redirect(ADMIN_ROLE_DEFAULT_ROUTES[sessionResult.session.role]);
+  switch (sessionResult.kind) {
+    case "valid":
+      redirect(ADMIN_ROLE_DEFAULT_ROUTES[sessionResult.session.role]);
+    case "invalid":
+    case "expired":
+      redirect(`/auth/refresh?${new URLSearchParams({ returnTo: "/" })}`);
+    case "missing":
+      break;
+    default:
+      sessionResult satisfies never;
   }
 
   const errorMessage = authErrorCopy((await searchParams).authError);

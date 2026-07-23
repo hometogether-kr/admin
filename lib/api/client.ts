@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import {
-  adminActionFailure,
   adminActionSuccess,
   type AdminActionResult,
 } from "@/lib/actions/result";
@@ -30,7 +29,6 @@ import {
 import { AdminAuthError } from "@/lib/auth/errors";
 import { refreshAdminSession } from "@/lib/auth/refresh";
 import { normalizeReturnTo } from "@/lib/auth/return-to";
-import { AdminOriginError, requireSameOriginMutation } from "@/lib/auth/same-origin";
 import {
   clearAdminSession,
   commitAdminSession,
@@ -60,6 +58,20 @@ export type AdminMutationRequest = AdminRequestBase & {
   readonly successMessage: string;
 };
 
+type AdminMutationExecutionRequest = Omit<
+  AdminMutationRequest,
+  "operationId"
+>;
+
+export type AdminMutationActionContext = {
+  readonly mutate: (
+    request: AdminMutationExecutionRequest,
+  ) => Promise<AdminActionResult>;
+  readonly read: <Schema extends z.ZodType>(
+    request: AdminReadRequest<Schema>,
+  ) => Promise<z.output<Schema>>;
+};
+
 function refreshRedirect(returnTo: string): never {
   const search = new URLSearchParams({ returnTo: normalizeReturnTo(returnTo) });
   redirect(`/auth/refresh?${search.toString()}`);
@@ -76,9 +88,17 @@ export async function readAdminApi<Schema extends z.ZodType>(
     if (cause instanceof AdminAuthError) refreshRedirect(request.returnTo);
     throw cause;
   }
+  return readAdminApiWithSession(request, authorized.session);
+}
+
+async function readAdminApiWithSession<Schema extends z.ZodType>(
+  request: AdminReadRequest<Schema>,
+  session: AdminSessionInput,
+): Promise<z.output<Schema>> {
+  authorizeAdminSessionForOperation(request.operationId, session);
   try {
     return await executeAdminJson({
-      request: { ...request, session: authorized.session },
+      request: { ...request, session },
       responseSchema: request.responseSchema,
     });
   } catch (cause) {
@@ -191,37 +211,12 @@ async function refreshAndReplay(
   }
 }
 
-export async function mutateAdminApi(
+async function mutateAdminApiWithSession(
   request: AdminMutationRequest,
+  session: AdminApiSession,
 ): Promise<AdminActionResult> {
   try {
-    await requireSameOriginMutation();
-  } catch (cause) {
-    if (cause instanceof AdminOriginError) {
-      return adminActionFailure("요청 출처를 확인할 수 없습니다.");
-    }
-    if (cause instanceof Error) {
-      return adminApiFailureResult(new AdminApiError({
-        kind: "unexpected",
-        operationId: request.operationId,
-        cause,
-      }));
-    }
-    throw cause;
-  }
-
-  let authorized;
-  try {
-    authorized = await requireAuthorizedAdminSession(request.operationId);
-  } catch (cause) {
-    if (cause instanceof AdminAuthError) {
-      return adminActionFailure("로그인이 필요합니다. 다시 로그인해 주세요.");
-    }
-    throw cause;
-  }
-
-  try {
-    await executeMutation(request, authorized.session);
+    await executeMutation(request, session);
     revalidateMutationPaths(request.operationId, request.revalidatePaths);
     return adminActionSuccess(request.successMessage);
   } catch (cause) {
@@ -238,4 +233,18 @@ export async function mutateAdminApi(
     }
     throw cause;
   }
+}
+
+export function createAdminMutationActionContext(
+  operationId: AdminMutationOperationId,
+  session: AdminSessionInput,
+): AdminMutationActionContext {
+  return {
+    mutate: (request) =>
+      mutateAdminApiWithSession(
+        { ...request, operationId },
+        session,
+      ),
+    read: (request) => readAdminApiWithSession(request, session),
+  };
 }
