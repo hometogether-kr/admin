@@ -6,6 +6,7 @@ import {
   NOTIFICATION_TEMPLATES,
   RESERVATION_STATUSES,
 } from "@/features/reservations/constants";
+import type { ReservationListQuery } from "@/features/reservations/list-filter";
 
 const nullableText = z.string().nullable().optional();
 const nullableDate = z
@@ -67,5 +68,19 @@ export const reservationSchema = z
   .readonly();
 
 export const reservationsSchema = z.array(reservationSchema).readonly();
+
+const reservationListQuerySchema = z.strictObject({
+  status: z
+    .union([z.literal(""), reservationStatusSchema])
+    .optional(),
+});
+
+export function parseReservationListQuery(value: unknown): ReservationListQuery {
+  const parsed = reservationListQuerySchema.safeParse(value);
+  if (!parsed.success || parsed.data.status === "") {
+    return { status: undefined };
+  }
+  return { status: parsed.data.status };
+}
 
 export type Reservation = z.infer<typeof reservationSchema>;

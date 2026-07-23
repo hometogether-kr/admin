@@ -9,14 +9,19 @@ import {
   reservationsSchema,
   type Reservation,
 } from "@/features/reservations/schemas";
+import {
+  reservationListHref,
+  type ReservationListQuery,
+} from "@/features/reservations/list-filter";
 
 export async function listReservations(
-  returnTo: string,
+  query: ReservationListQuery,
 ): Promise<readonly Reservation[]> {
   return readAdminApi({
     operationId: "RES-01",
+    query: { status: query.status },
     responseSchema: reservationsSchema,
-    returnTo,
+    returnTo: reservationListHref(query.status),
   });
 }
 

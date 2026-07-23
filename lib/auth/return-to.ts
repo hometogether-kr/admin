@@ -14,7 +14,7 @@ const LIST_ROUTE_RULES: readonly ListRouteRule[] = [
   { path: "/", queryKeys: [] },
   { path: "/users", queryKeys: [] },
   { path: "/rooms", queryKeys: ["page", "limit", "status", "hostId"] },
-  { path: "/reservations", queryKeys: [] },
+  { path: "/reservations", queryKeys: ["status"] },
   { path: "/contracts", queryKeys: [] },
   { path: "/payments", queryKeys: [] },
   { path: "/reports", queryKeys: ["page", "limit", "status", "targetType"] },
