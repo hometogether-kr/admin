@@ -97,7 +97,7 @@ export function RoomMutationReceipt(props: RoomMutationReceiptProps) {
     const receipt = state[RECEIPT_STATE_KEY];
     const nextState = { ...state };
     delete nextState[RECEIPT_STATE_KEY];
-    window.history.replaceState(nextState, "", window.location.pathname);
+    window.history.replaceState(nextState, "");
 
     if (!isMutationReceipt(receipt) || receipt.destination !== window.location.pathname) {
       return;
