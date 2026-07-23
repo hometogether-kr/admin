@@ -2,7 +2,10 @@ import "server-only";
 
 import { z } from "zod";
 
-const PRODUCTION_API_ORIGIN = "https://api.hometogether.kr";
+const PRODUCTION_API_ORIGINS = [
+  "https://api.hometogether.kr",
+  "https://dev-api.hometogether.kr",
+] as const;
 const PRODUCTION_ADMIN_ORIGIN = "https://admin.hometogether.kr";
 const LOOPBACK_HOSTNAMES = ["127.0.0.1", "localhost", "[::1]"] as const;
 
@@ -72,13 +75,15 @@ const environmentSchema = z
   })
   .superRefine((environment, context) => {
     const origins = [
-      ["ADMIN_API_BASE_URL", environment.ADMIN_API_BASE_URL, PRODUCTION_API_ORIGIN],
-      ["ADMIN_PUBLIC_ORIGIN", environment.ADMIN_PUBLIC_ORIGIN, PRODUCTION_ADMIN_ORIGIN],
+      ["ADMIN_API_BASE_URL", environment.ADMIN_API_BASE_URL, PRODUCTION_API_ORIGINS],
+      ["ADMIN_PUBLIC_ORIGIN", environment.ADMIN_PUBLIC_ORIGIN, [PRODUCTION_ADMIN_ORIGIN]],
     ] as const;
 
-    for (const [field, value, productionOrigin] of origins) {
+    for (const [field, value, productionOrigins] of origins) {
       const url = new URL(value);
-      const isProductionOrigin = url.origin === productionOrigin;
+      const isProductionOrigin = productionOrigins.some(
+        (productionOrigin) => url.origin === productionOrigin,
+      );
       const isLoopbackHttp =
         environment.NODE_ENV !== "production" &&
         url.protocol === "http:" &&
