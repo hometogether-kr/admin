@@ -12,6 +12,7 @@ import { RegistrationRoomDetail } from "@/features/rooms/components/registration
 import { RoomActionPanel } from "@/features/rooms/components/room-action-panel";
 import { RoomStatusBadge } from "@/features/rooms/components/room-status-badge";
 import { booleanLabel, formatDate } from "@/features/rooms/format";
+import { RoomMutationReceipt } from "@/features/rooms/mutation-receipt";
 import { readRoom } from "@/features/rooms/queries";
 
 type RoomDetailPageProps = { readonly params: Promise<{ readonly id: string }> };
@@ -50,6 +51,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
         eyebrow={<span className="admin-break-anywhere font-mono">{roomId}</span>}
         title={roomTitle}
       />
+      <RoomMutationReceipt roomId={roomId} surface="detail" />
       <div className="flex flex-wrap gap-2">
         <RoomStatusBadge status={room.roomStatus} />
         <Badge variant={room.isPublic ? "success" : "neutral"}>{room.isPublic ? "공개" : "비공개"}</Badge>

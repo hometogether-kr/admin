@@ -27,7 +27,7 @@ export function RoomsTable({ rooms }: RoomsTableProps) {
         key: room.id,
         cells: [
           <Link
-            className="admin-focus font-semibold text-brand hover:underline"
+            className="admin-focus whitespace-nowrap font-semibold text-brand hover:underline"
             href={`/rooms/${room.id}`}
             key={`${room.id}-title`}
           >

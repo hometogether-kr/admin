@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
 import { RoomFilters } from "@/features/rooms/components/room-filters";
 import { RoomsTable } from "@/features/rooms/components/rooms-table";
+import { RoomMutationReceipt } from "@/features/rooms/mutation-receipt";
 import {
   parseRoomSearch,
   roomListHref,
@@ -51,6 +52,7 @@ export default async function RoomsPage({ searchParams }: RoomsPageProps) {
         eyebrow={`전체 ${new Intl.NumberFormat("ko-KR").format(result.total)}개`}
         title="방 관리"
       />
+      <RoomMutationReceipt surface="list" />
       <RoomFilters search={search} />
       {result.items.length === 0 ? (
         <EmptyState

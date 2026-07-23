@@ -16,6 +16,7 @@ export function MediaDeleteAction({ filename, mediaId, roomId }: MediaDeleteActi
       confirmLabel="미디어 삭제"
       description={`“${filename}” 파일을 방에서 삭제합니다. 취소하면 요청은 전송되지 않습니다.`}
       id={`room-${roomId}-media-${mediaId}-delete`}
+      roomId={roomId}
       title="미디어를 삭제할까요?"
       tone="destructive"
       triggerLabel="삭제"

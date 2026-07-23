@@ -5,17 +5,16 @@ import {
   cloneElement,
   isValidElement,
   useActionState,
-  useEffect,
   useRef,
   useState,
   type ReactNode,
   type SyntheticEvent,
 } from "react";
-import { useRouter } from "next/navigation";
 
 import { ActionFeedback } from "@/components/admin/action-feedback";
 import { Button, type ButtonVariant } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { RoomMutationCompletion } from "@/features/rooms/mutation-receipt";
 import {
   INITIAL_ADMIN_ACTION_RESULT,
   type AdminActionResult,
@@ -32,6 +31,7 @@ type ConfirmedActionProps = {
   readonly confirmLabel: string;
   readonly description: string;
   readonly id: string;
+  readonly roomId: string;
   readonly title: string;
   readonly tone?: "default" | "destructive";
   readonly triggerLabel: string;
@@ -48,13 +48,13 @@ export function ConfirmedAction({
   confirmLabel,
   description,
   id,
+  roomId,
   title,
   tone,
   triggerLabel,
   triggerVariant,
   trimmedRequiredField,
 }: ConfirmedActionProps) {
-  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -63,19 +63,6 @@ export function ConfirmedAction({
     action,
     INITIAL_ADMIN_ACTION_RESULT,
   );
-
-  useEffect(() => {
-    switch (result.kind) {
-      case "success":
-        router.refresh();
-        return;
-      case "idle":
-      case "error":
-        return;
-      default:
-        result satisfies never;
-    }
-  }, [result, router]);
 
   function closeDialog() {
     dialogRef.current?.close();
@@ -112,6 +99,7 @@ export function ConfirmedAction({
 
   return (
     <form action={submit} className="grid gap-2" ref={formRef}>
+      <RoomMutationCompletion result={result} roomId={roomId} />
       <Button onClick={openDialog} ref={triggerRef} variant={triggerVariant}>
         {triggerLabel}
       </Button>

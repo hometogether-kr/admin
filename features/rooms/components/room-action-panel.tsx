@@ -54,6 +54,7 @@ export function RoomActionPanel({
           confirmLabel="승인"
           description="제출된 방 정보를 승인합니다."
           id={`${idPrefix}-approve`}
+          roomId={roomId}
           title="방을 승인할까요?"
           triggerLabel="승인"
           triggerVariant="primary"
@@ -63,6 +64,7 @@ export function RoomActionPanel({
           confirmLabel="반려"
           description="호스트에게 전달할 사유를 입력하세요."
           id={`${idPrefix}-reject`}
+          roomId={roomId}
           title="방을 반려할까요?"
           tone="destructive"
           trimmedRequiredField={{ name: "reason", message: "반려 사유를 입력해 주세요." }}
@@ -82,6 +84,7 @@ export function RoomActionPanel({
           confirmLabel="수정 요청"
           description="호스트가 보완해야 할 내용을 입력하세요."
           id={`${idPrefix}-revision`}
+          roomId={roomId}
           title="수정을 요청할까요?"
           trimmedRequiredField={{ name: "message", message: "수정 요청 내용을 입력해 주세요." }}
           triggerLabel="수정 요청"
@@ -100,6 +103,7 @@ export function RoomActionPanel({
             confirmLabel="숨김"
             description="사용자 화면에서 이 방을 숨깁니다."
             id={`${idPrefix}-hide`}
+            roomId={roomId}
             title="방을 숨길까요?"
             tone="destructive"
             triggerLabel="숨김"
@@ -111,6 +115,7 @@ export function RoomActionPanel({
           confirmLabel="재전송"
           description="선택한 운영 알림을 호스트에게 다시 보냅니다."
           id={`${idPrefix}-notification`}
+          roomId={roomId}
           title="알림을 다시 보낼까요?"
           triggerLabel="알림 재전송"
         >
@@ -127,6 +132,7 @@ export function RoomActionPanel({
           confirmLabel="설정 저장"
           description="상세 주소 노출 여부를 명시적으로 변경합니다."
           id={`${idPrefix}-address`}
+          roomId={roomId}
           title="주소 공개 설정을 바꿀까요?"
           triggerLabel="주소 공개 설정"
         >
@@ -147,6 +153,7 @@ export function RoomActionPanel({
           confirmLabel="메모 저장"
           description="빈 값으로 저장하면 내부 메모를 제거합니다."
           id={`${idPrefix}-memo`}
+          roomId={roomId}
           title="내부 메모를 저장할까요?"
           triggerLabel="내부 메모"
         >
@@ -164,6 +171,7 @@ export function RoomActionPanel({
           confirmLabel="방 삭제"
           description="방을 소프트 삭제합니다. 취소하면 요청은 전송되지 않습니다."
           id={`${idPrefix}-delete`}
+          roomId={roomId}
           title="방을 삭제할까요?"
           tone="destructive"
           triggerLabel="방 삭제"

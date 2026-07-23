@@ -1,9 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { after } from "next/server";
-
-import { adminActionFailure, type AdminActionResult } from "@/lib/actions/result";
+import {
+  adminActionFailure,
+  type AdminActionResult,
+} from "@/lib/actions/result";
 import { mutateAdminApi, type AdminJsonBody } from "@/lib/api/client";
 import type { AdminMutationOperationId } from "@/lib/api/operations";
 import {
@@ -34,7 +34,7 @@ async function mutateRoom(input: MutationInput): Promise<AdminActionResult> {
   if (!roomId.success || (mediaId !== undefined && !mediaId.success)) {
     return adminActionFailure("올바른 방 식별자가 아닙니다.");
   }
-  const result = await mutateAdminApi({
+  return mutateAdminApi({
     operationId: input.operationId,
     pathParameters: {
       id: roomId.data,
@@ -45,19 +45,6 @@ async function mutateRoom(input: MutationInput): Promise<AdminActionResult> {
     revalidatePaths: [],
     successMessage: input.successMessage,
   });
-  switch (result.kind) {
-    case "success":
-      after(() => {
-        revalidatePath("/rooms");
-        revalidatePath(`/rooms/${roomId.data}`);
-      });
-      return result;
-    case "idle":
-    case "error":
-      return result;
-    default:
-      return result satisfies never;
-  }
 }
 
 export async function approveRoom(
