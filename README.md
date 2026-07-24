@@ -29,7 +29,7 @@ node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("b
 | 변수 | 계약 |
 | --- | --- |
 | `ADMIN_API_BASE_URL` | 환경에서 선택하는 관리자 API origin. 현재 배포·Swagger는 `https://dev-api.hometogether.kr` |
-| `ADMIN_PUBLIC_ORIGIN` | 관리자 앱의 공개 origin. 운영은 `https://admin.hometogether.kr` |
+| `ADMIN_PUBLIC_ORIGIN` | 환경별 관리자 공개 origin. dev는 `https://dev-admin.hometogether.kr`, prod는 `https://admin.hometogether.kr` |
 | `ADMIN_SESSION_SECRET` | 정확히 32바이트를 padding 없는 base64url로 인코딩한 세션 암호화 키 |
 | `ADMIN_SESSION_MAX_AGE_SECONDS` | 양의 정수 세션 수명. 최대 `604800`초 |
 | `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` | base64 AES 키. 모든 빌드·런타임 인스턴스에 동일한 안정된 값을 공급 |
@@ -40,17 +40,19 @@ node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("b
 의도된 운영 alias `https://api.hometogether.kr`는 모두 승인되어 있지만, 운영
 alias는 현재 retired/unavailable 상태로 사용할 수 없습니다. 배포 시에는 이름만
 보고 고정하지 말고 실제로 routing 중인 HTTPS host를 선택해야 합니다. 관리자
-앱의 공개 origin은 `https://admin.hometogether.kr`를 사용하며, 개발 환경에서만
+앱의 공개 origin은 dev에서 `https://dev-admin.hometogether.kr`, prod에서
+`https://admin.hometogether.kr`를 사용하며, 로컬 개발 환경에서만
 localhost/loopback HTTP를 허용합니다.
 
 ## 운영 배포 체크리스트
 
-- 관리자 앱을 `https://admin.hometogether.kr`에서 HTTPS로 제공합니다.
+- 관리자 앱을 환경에 맞는 `https://dev-admin.hometogether.kr` 또는
+  `https://admin.hometogether.kr`에서 HTTPS로 제공합니다.
 - `ADMIN_API_BASE_URL`에는 배포 시점에 실제 routing 중인 승인된 HTTPS API
   host를 설정합니다.
-- API 배포 환경에
-  `KAKAO_REDIRECT_URI=https://admin.hometogether.kr/auth/kakao/callback`을
-  설정하고 Kakao 개발자 콘솔에도 완전히 같은 callback URL을 등록합니다.
+- API 배포 환경의 `KAKAO_REDIRECT_URI`를 해당 관리자 origin의
+  `/auth/kakao/callback`으로 설정하고 Kakao 개발자 콘솔에도 완전히 같은
+  callback URL을 등록합니다.
 - 프록시/CDN은 원래 요청의 `Host`와 `X-Forwarded-Host`를 보존합니다.
 - 모든 관리자 앱 인스턴스에 같은 `ADMIN_SESSION_SECRET`과 안정된
   `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY`를 공급합니다.
