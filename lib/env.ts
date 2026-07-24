@@ -6,7 +6,10 @@ const PRODUCTION_API_ORIGINS = [
   "https://api.hometogether.kr",
   "https://dev-api.hometogether.kr",
 ] as const;
-const PRODUCTION_ADMIN_ORIGIN = "https://admin.hometogether.kr";
+const PRODUCTION_ADMIN_ORIGINS = [
+  "https://admin.hometogether.kr",
+  "https://dev-admin.hometogether.kr",
+] as const;
 const LOOPBACK_HOSTNAMES = ["127.0.0.1", "localhost", "[::1]"] as const;
 
 const originSchema = z.url().superRefine((value, context) => {
@@ -76,7 +79,11 @@ const environmentSchema = z
   .superRefine((environment, context) => {
     const origins = [
       ["ADMIN_API_BASE_URL", environment.ADMIN_API_BASE_URL, PRODUCTION_API_ORIGINS],
-      ["ADMIN_PUBLIC_ORIGIN", environment.ADMIN_PUBLIC_ORIGIN, [PRODUCTION_ADMIN_ORIGIN]],
+      [
+        "ADMIN_PUBLIC_ORIGIN",
+        environment.ADMIN_PUBLIC_ORIGIN,
+        PRODUCTION_ADMIN_ORIGINS,
+      ],
     ] as const;
 
     for (const [field, value, productionOrigins] of origins) {
