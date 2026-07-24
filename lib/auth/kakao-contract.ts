@@ -90,13 +90,31 @@ function stateCookieSecureAttribute(): readonly string[] {
   return new URL(env.ADMIN_API_BASE_URL).protocol === "https:" ? ["Secure"] : [];
 }
 
+function readCanonicalExpiresAttribute(rawCookie: string): string | null {
+  const expiresAttribute = rawCookie
+    .split(";")
+    .slice(1)
+    .map((part) => part.trim())
+    .find((attribute) => attribute.startsWith("Expires="));
+  const expiresValue = expiresAttribute?.slice("Expires=".length) ?? "";
+  const expiresAt = Date.parse(expiresValue);
+  return expiresAttribute !== undefined &&
+    IMF_FIXDATE_PATTERN.test(expiresValue) &&
+    !Number.isNaN(expiresAt) &&
+    new Date(expiresAt).toUTCString() === expiresValue
+    ? expiresAttribute
+    : null;
+}
+
 function validStateClearCookie(rawCookie: string): boolean {
+  const expiresAttribute = readCanonicalExpiresAttribute(rawCookie);
   return (
     rawCookie.split(";")[0] === `${KAKAO_STATE_COOKIE_NAME}=` &&
+    expiresAttribute !== null &&
     exactCookieAttributes(rawCookie, [
       "Max-Age=0",
       `Path=${KAKAO_CALLBACK_PATH}`,
-      "Expires=Thu, 01 Jan 1970 00:00:00 GMT",
+      expiresAttribute,
       "HttpOnly",
       ...stateCookieSecureAttribute(),
       "SameSite=Lax",
@@ -131,19 +149,10 @@ export function validStateSetCookie(rawCookie: string): boolean {
   const [pair = ""] = rawCookie.split(";");
   const prefix = `${KAKAO_STATE_COOKIE_NAME}=`;
   const value = pair.startsWith(prefix) ? pair.slice(prefix.length) : "";
-  const expiresAttribute = rawCookie
-    .split(";")
-    .slice(1)
-    .map((part) => part.trim())
-    .find((attribute) => attribute.startsWith("Expires="));
-  const expiresValue = expiresAttribute?.slice("Expires=".length) ?? "";
-  const expiresAt = Date.parse(expiresValue);
+  const expiresAttribute = readCanonicalExpiresAttribute(rawCookie);
   return (
     oauthStateSchema.safeParse(value).success &&
-    expiresAttribute !== undefined &&
-    IMF_FIXDATE_PATTERN.test(expiresValue) &&
-    !Number.isNaN(expiresAt) &&
-    new Date(expiresAt).toUTCString() === expiresValue &&
+    expiresAttribute !== null &&
     exactCookieAttributes(rawCookie, [
       "Max-Age=600",
       `Path=${KAKAO_CALLBACK_PATH}`,
