@@ -129,11 +129,20 @@ export function validStateSetCookie(rawCookie: string): boolean {
   const [pair = ""] = rawCookie.split(";");
   const prefix = `${KAKAO_STATE_COOKIE_NAME}=`;
   const value = pair.startsWith(prefix) ? pair.slice(prefix.length) : "";
+  const expiresAttribute = rawCookie
+    .split(";")
+    .slice(1)
+    .map((part) => part.trim())
+    .find((attribute) => attribute.startsWith("Expires="));
+  const expiresAt = Date.parse(expiresAttribute?.slice("Expires=".length) ?? "");
   return (
     oauthStateSchema.safeParse(value).success &&
+    expiresAttribute !== undefined &&
+    !Number.isNaN(expiresAt) &&
     exactCookieAttributes(rawCookie, [
       "Max-Age=600",
       `Path=${KAKAO_CALLBACK_PATH}`,
+      expiresAttribute,
       "HttpOnly",
       ...stateCookieSecureAttribute(),
       "SameSite=Lax",
