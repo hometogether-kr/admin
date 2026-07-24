@@ -1,65 +1,110 @@
-import Image from "next/image";
+import { HouseLineIcon } from "@phosphor-icons/react/ssr";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+import { Alert } from "@/components/ui/alert";
+import type { OAuthErrorCode } from "@/lib/auth/oauth";
+import type { RefreshErrorCode } from "@/lib/auth/refresh";
+import { ADMIN_ROLE_DEFAULT_ROUTES } from "@/lib/auth/roles";
+import { readAdminSession } from "@/lib/auth/session";
+
+type AuthQueryErrorCode = OAuthErrorCode | RefreshErrorCode;
+
+const AUTH_ERROR_COPY = [
+  { code: "oauth_start_rejected", message: "카카오 로그인을 시작하지 못했습니다. 다시 시도해 주세요." },
+  { code: "oauth_start_unavailable", message: "로그인 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해 주세요." },
+  { code: "oauth_start_invalid_response", message: "로그인 요청을 처리하지 못했습니다. 다시 시도해 주세요." },
+  { code: "oauth_callback_invalid", message: "로그인 요청을 확인할 수 없습니다. 처음부터 다시 시도해 주세요." },
+  { code: "oauth_callback_rejected", message: "카카오 로그인이 완료되지 않았습니다. 다시 시도해 주세요." },
+  { code: "oauth_callback_unavailable", message: "로그인 서비스가 일시적으로 응답하지 않습니다. 잠시 후 다시 시도해 주세요." },
+  { code: "oauth_callback_invalid_response", message: "로그인 결과를 확인하지 못했습니다. 다시 시도해 주세요." },
+  { code: "oauth_role_unsupported", message: "이 계정은 관리자 서비스에 접근할 수 없습니다." },
+  { code: "refresh_session_invalid", message: "로그인 세션을 확인할 수 없습니다. 다시 로그인해 주세요." },
+  { code: "refresh_rejected", message: "로그인 세션이 만료되었습니다. 다시 로그인해 주세요." },
+  { code: "refresh_unavailable", message: "세션 갱신 서비스에 연결할 수 없습니다. 잠시 후 다시 로그인해 주세요." },
+  { code: "refresh_response_invalid", message: "로그인 세션을 갱신하지 못했습니다. 다시 로그인해 주세요." },
+  { code: "refresh_role_unsupported", message: "현재 계정 권한으로 관리자 서비스에 접근할 수 없습니다." },
+  { code: "refresh_subject_mismatch", message: "로그인 정보를 확인하지 못했습니다. 다시 로그인해 주세요." },
+] as const satisfies readonly {
+  readonly code: AuthQueryErrorCode;
+  readonly message: string;
+}[];
+
+const UNKNOWN_AUTH_ERROR_COPY =
+  "로그인 요청을 처리하지 못했습니다. 처음부터 다시 시도해 주세요.";
+
+type HomePageProps = {
+  readonly searchParams: Promise<{
+    readonly authError?: string | readonly string[];
+  }>;
+};
+
+function authErrorCopy(value: string | readonly string[] | undefined): string | null {
+  if (value === undefined) return null;
+  if (typeof value !== "string") return UNKNOWN_AUTH_ERROR_COPY;
+  return AUTH_ERROR_COPY.find((entry) => entry.code === value)?.message ??
+    UNKNOWN_AUTH_ERROR_COPY;
+}
+
+export default async function Home({ searchParams }: HomePageProps) {
+  const sessionResult = await readAdminSession();
+  switch (sessionResult.kind) {
+    case "valid":
+      redirect(ADMIN_ROLE_DEFAULT_ROUTES[sessionResult.session.role]);
+    case "invalid":
+    case "expired":
+      redirect(`/auth/refresh?${new URLSearchParams({ returnTo: "/" })}`);
+    case "missing":
+      break;
+    default:
+      sessionResult satisfies never;
+  }
+
+  const errorMessage = authErrorCopy((await searchParams).authError);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main className="grid min-h-[100dvb] flex-1 place-items-center px-5 py-10 sm:px-6">
+      <section
+        aria-labelledby="login-title"
+        className="grid w-full max-w-md gap-6 rounded-dialog border border-line-subtle bg-surface p-6 sm:p-8"
+      >
+        <div className="grid justify-items-center gap-4 text-center">
+          <span className="flex size-12 items-center justify-center rounded-panel border border-line-subtle bg-brand-soft text-brand-soft-ink">
+            <HouseLineIcon
+              aria-hidden="true"
+              focusable="false"
+              size={24}
+              weight="fill"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </span>
+          <div className="grid gap-2">
+            <p className="text-label font-semibold text-brand-soft-ink">
+              HomeTogether Admin
+            </p>
+            <h1
+              className="admin-keep-words text-page-title font-semibold text-ink-strong"
+              id="login-title"
+            >
+              관리자 로그인
+            </h1>
+            <p className="admin-keep-words text-body text-ink-subtle">
+              카카오로 로그인해 관리 업무를 계속하세요.
+            </p>
+          </div>
         </div>
-      </main>
-    </div>
+
+        {errorMessage ? (
+          <Alert title="로그인 안내" variant="error">
+            <p>{errorMessage}</p>
+          </Alert>
+        ) : null}
+
+        <a
+          className="admin-focus admin-interactive flex min-h-touch w-full items-center justify-center rounded-control bg-kakao px-4 text-body font-semibold text-ink-strong hover:bg-kakao-hover"
+          href="/auth/kakao"
+        >
+          카카오로 로그인
+        </a>
+      </section>
+    </main>
   );
 }

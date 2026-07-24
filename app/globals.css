@@ -1,26 +1,292 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ht-surface-canvas: #f4f6f8;
+  --ht-surface-default: #ffffff;
+  --ht-surface-subtle: #f8fafc;
+  --ht-surface-muted: #eef1f5;
+  --ht-surface-pressed: #e5eaf0;
+  --ht-surface-overlay: rgb(17 24 39 / 48%);
+  --ht-text-strong: #17202b;
+  --ht-text-default: #344054;
+  --ht-text-subtle: #667085;
+  --ht-text-disabled: #98a2b3;
+  --ht-text-inverse: #ffffff;
+  --ht-border-subtle: #e7ebf0;
+  --ht-border-default: #8893a3;
+  --ht-border-strong: #667085;
+  --ht-accent-default: #3659d9;
+  --ht-accent-hover: #2d4dbd;
+  --ht-accent-pressed: #253f9b;
+  --ht-accent-soft: #eef2ff;
+  --ht-accent-soft-text: #3146a6;
+  --ht-success-default: #16794d;
+  --ht-success-soft: #eaf7f0;
+  --ht-warning-default: #9a5b13;
+  --ht-warning-soft: #fff6e8;
+  --ht-error-default: #c0343d;
+  --ht-error-hover: #a42b34;
+  --ht-error-soft: #fff0f1;
+  --ht-info-default: #126a8c;
+  --ht-info-soft: #eaf6fa;
+  --ht-kakao-action: #fee500;
+  --ht-kakao-action-hover: #f5dc00;
+  --ht-space-1: 0.25rem;
+  --ht-space-2: 0.5rem;
+  --ht-space-3: 0.75rem;
+  --ht-space-4: 1rem;
+  --ht-space-5: 1.25rem;
+  --ht-space-6: 1.5rem;
+  --ht-space-8: 2rem;
+  --ht-space-10: 2.5rem;
+  --ht-space-12: 3rem;
+  --ht-control-sm: 2rem;
+  --ht-control-default: 2.25rem;
+  --ht-control-lg: 2.5rem;
+  --ht-touch-target: 2.75rem;
+  --ht-sidebar-width: 15rem;
+  --ht-content-max: 90rem;
+  --ht-table-min: 45rem;
+  --ht-border-width: 1px;
+  --ht-radius-sm: 0.25rem;
+  --ht-radius-control: 0.375rem;
+  --ht-radius-panel: 0.5rem;
+  --ht-radius-dialog: 0.625rem;
+  --ht-shadow-subtle: 0 1px 2px rgb(17 24 39 / 6%);
+  --ht-shadow-dialog: 0 16px 40px rgb(17 24 39 / 18%);
+  --ht-motion-micro: 120ms;
+  --ht-motion-standard: 180ms;
+  --ht-motion-easing: cubic-bezier(0.2, 0, 0, 1);
+  --ht-focus-width: 2px;
+  --ht-focus-offset: 2px;
+  --ht-font-sans: var(--font-geist-sans), "Apple SD Gothic Neo", "Noto Sans KR",
+    "Malgun Gothic", system-ui, sans-serif;
+  --ht-font-mono: var(--font-geist-mono), "SFMono-Regular", Consolas,
+    "Liberation Mono", monospace;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--ht-surface-canvas);
+  --color-surface: var(--ht-surface-default);
+  --color-surface-subtle: var(--ht-surface-subtle);
+  --color-surface-muted: var(--ht-surface-muted);
+  --color-surface-pressed: var(--ht-surface-pressed);
+  --color-overlay: var(--ht-surface-overlay);
+  --color-ink-strong: var(--ht-text-strong);
+  --color-ink: var(--ht-text-default);
+  --color-ink-subtle: var(--ht-text-subtle);
+  --color-ink-disabled: var(--ht-text-disabled);
+  --color-ink-inverse: var(--ht-text-inverse);
+  --color-line-subtle: var(--ht-border-subtle);
+  --color-line: var(--ht-border-default);
+  --color-line-strong: var(--ht-border-strong);
+  --color-brand: var(--ht-accent-default);
+  --color-brand-hover: var(--ht-accent-hover);
+  --color-brand-pressed: var(--ht-accent-pressed);
+  --color-brand-soft: var(--ht-accent-soft);
+  --color-brand-soft-ink: var(--ht-accent-soft-text);
+  --color-positive: var(--ht-success-default);
+  --color-positive-soft: var(--ht-success-soft);
+  --color-caution: var(--ht-warning-default);
+  --color-caution-soft: var(--ht-warning-soft);
+  --color-negative: var(--ht-error-default);
+  --color-negative-hover: var(--ht-error-hover);
+  --color-negative-soft: var(--ht-error-soft);
+  --color-information: var(--ht-info-default);
+  --color-information-soft: var(--ht-info-soft);
+  --color-kakao: var(--ht-kakao-action);
+  --color-kakao-hover: var(--ht-kakao-action-hover);
+  --font-sans: var(--ht-font-sans);
+  --font-mono: var(--ht-font-mono);
+  --radius-control: var(--ht-radius-control);
+  --radius-panel: var(--ht-radius-panel);
+  --radius-dialog: var(--ht-radius-dialog);
+  --shadow-subtle: var(--ht-shadow-subtle);
+  --shadow-dialog: var(--ht-shadow-dialog);
+  --spacing-control-sm: var(--ht-control-sm);
+  --spacing-control: var(--ht-control-default);
+  --spacing-control-lg: var(--ht-control-lg);
+  --spacing-touch: var(--ht-touch-target);
+  --spacing-sidebar: var(--ht-sidebar-width);
+  --spacing-table: var(--ht-table-min);
+  --container-content: var(--ht-content-max);
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --text-page-title: 1.5rem;
+  --text-page-title--line-height: 1.25;
+  --text-page-title--letter-spacing: -0.02em;
+  --text-section: 1.125rem;
+  --text-section--line-height: 1.35;
+  --text-section--letter-spacing: -0.015em;
+  --text-subsection: 1rem;
+  --text-subsection--line-height: 1.4;
+  --text-subsection--letter-spacing: -0.01em;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.5;
+  --text-compact: 0.8125rem;
+  --text-compact--line-height: 1.4;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.35;
+  --text-label--letter-spacing: 0.01em;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-block-size: 100%;
+    background: var(--ht-surface-canvas);
+    color: var(--ht-text-default);
+  }
+
+  body {
+    min-block-size: 100dvb;
+    margin: 0;
+    background: var(--ht-surface-canvas);
+    color: var(--ht-text-default);
+    font-family: var(--ht-font-sans);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    overflow-wrap: break-word;
+    word-break: keep-all;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: var(--ht-accent-soft);
+    color: var(--ht-text-strong);
+  }
+
+  dialog::backdrop {
+    background: var(--ht-surface-overlay);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .admin-focus {
+    outline: none;
+  }
+
+  .admin-focus:focus-visible {
+    outline: var(--ht-focus-width) solid var(--ht-accent-default);
+    outline-offset: var(--ht-focus-offset);
+  }
+
+  .admin-interactive {
+    transition:
+      background-color var(--ht-motion-micro) var(--ht-motion-easing),
+      border-color var(--ht-motion-micro) var(--ht-motion-easing),
+      color var(--ht-motion-micro) var(--ht-motion-easing),
+      opacity var(--ht-motion-micro) var(--ht-motion-easing),
+      transform var(--ht-motion-micro) var(--ht-motion-easing);
+  }
+
+  .admin-interactive:active:not(:disabled) {
+    transform: translateY(var(--ht-border-width));
+  }
+
+  .admin-control {
+    min-block-size: var(--ht-control-default);
+  }
+
+  .admin-control-sm {
+    min-block-size: var(--ht-control-sm);
+  }
+
+  .admin-control-lg {
+    min-block-size: var(--ht-control-lg);
+  }
+
+  .admin-break-anywhere {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .admin-keep-words {
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+    word-break: keep-all;
+  }
+
+  .admin-balanced-copy {
+    text-wrap: balance;
+  }
+
+  .admin-spinner {
+    animation: admin-spin 800ms linear infinite;
+  }
+
+  .admin-dialog[open] {
+    animation: admin-dialog-in var(--ht-motion-standard) var(--ht-motion-easing);
+  }
+
+  .admin-drawer[open] {
+    animation: admin-drawer-in var(--ht-motion-standard) var(--ht-motion-easing);
+  }
+}
+
+@keyframes admin-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes admin-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--ht-space-2)) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes admin-drawer-in {
+  from {
+    transform: translateX(calc(-1 * var(--ht-space-4)));
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (width < 40rem), (pointer: coarse) {
+  .admin-control,
+  .admin-control-sm,
+  .admin-control-lg {
+    min-block-size: var(--ht-touch-target);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
