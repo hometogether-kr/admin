@@ -134,11 +134,13 @@ export function validStateSetCookie(rawCookie: string): boolean {
     .slice(1)
     .map((part) => part.trim())
     .find((attribute) => attribute.startsWith("Expires="));
-  const expiresAt = Date.parse(expiresAttribute?.slice("Expires=".length) ?? "");
+  const expiresValue = expiresAttribute?.slice("Expires=".length) ?? "";
+  const expiresAt = Date.parse(expiresValue);
   return (
     oauthStateSchema.safeParse(value).success &&
     expiresAttribute !== undefined &&
     !Number.isNaN(expiresAt) &&
+    new Date(expiresAt).toUTCString() === expiresValue &&
     exactCookieAttributes(rawCookie, [
       "Max-Age=600",
       `Path=${KAKAO_CALLBACK_PATH}`,
