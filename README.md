@@ -50,7 +50,7 @@ localhost/loopback HTTP를 허용합니다.
   `https://admin.hometogether.kr`에서 HTTPS로 제공합니다.
 - `ADMIN_API_BASE_URL`에는 배포 시점에 실제 routing 중인 승인된 HTTPS API
   host를 설정합니다.
-- API 배포 환경의 `KAKAO_REDIRECT_URI`를 해당 관리자 origin의
+- API 배포 환경의 `KAKAO_ADMIN_REDIRECT_URI`를 해당 관리자 origin의
   `/auth/kakao/callback`으로 설정하고 Kakao 개발자 콘솔에도 완전히 같은
   callback URL을 등록합니다.
 - 프록시/CDN은 원래 요청의 `Host`와 `X-Forwarded-Host`를 보존합니다.
@@ -67,4 +67,5 @@ localhost/loopback HTTP를 허용합니다.
 API에는 토큰 폐기 endpoint가 없으므로 upstream revoke를 수행했다고 간주하면
 안 됩니다.
 
-이 관리자 대시보드 작업은 API 저장소를 변경하지 않습니다.
+관리자 BFF는 API의 `/admin/auth/kakao`와
+`/admin/auth/kakao/callback`을 통해서만 관리자 OAuth를 처리합니다.

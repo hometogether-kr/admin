@@ -7,7 +7,6 @@ import { ADMIN_ROLES } from "@/lib/api/operations";
 import { AdminAuthError } from "@/lib/auth/errors";
 import {
   callbackEnvelopeSchema,
-  KAKAO_CALLBACK_PATH,
   KAKAO_STATE_COOKIE_NAME,
   upstreamClearCookie,
   validStateSetCookie,
@@ -71,6 +70,9 @@ const UPSTREAM_OPTIONS = {
   headers: { Accept: "application/json" },
 } as const;
 
+const ADMIN_KAKAO_START_PATH = "/admin/auth/kakao";
+const ADMIN_KAKAO_CALLBACK_PATH = "/admin/auth/kakao/callback";
+
 function callbackFailure(
   error: OAuthFlowError,
   stateClearCookie?: string,
@@ -91,7 +93,8 @@ function callbackStatusError(status: number): OAuthFlowError {
 export async function startKakaoOAuth(): Promise<KakaoOAuthStartResult> {
   let response: Response;
   try {
-    response = await ky.get(new URL("/auth/kakao", env.ADMIN_API_BASE_URL),
+    response = await ky.get(
+      new URL(ADMIN_KAKAO_START_PATH, env.ADMIN_API_BASE_URL),
       UPSTREAM_OPTIONS,
     );
   } catch (cause) {
@@ -124,7 +127,10 @@ export async function startKakaoOAuth(): Promise<KakaoOAuthStartResult> {
 export async function completeKakaoOAuth(
   input: KakaoCallbackInput,
 ): Promise<KakaoCallbackResult> {
-  const callbackUrl = new URL(KAKAO_CALLBACK_PATH, env.ADMIN_API_BASE_URL);
+  const callbackUrl = new URL(
+    ADMIN_KAKAO_CALLBACK_PATH,
+    env.ADMIN_API_BASE_URL,
+  );
   callbackUrl.searchParams.set("code", input.code);
   callbackUrl.searchParams.set("state", input.state);
 
