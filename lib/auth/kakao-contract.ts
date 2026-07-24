@@ -18,6 +18,8 @@ const callbackCodeSchema = z
   .max(2_048)
   .regex(/^[^\u0000-\u001f\u007f]+$/u);
 const oauthStateSchema = z.string().regex(/^[A-Za-z0-9_-]{43}$/u);
+const IMF_FIXDATE_PATTERN =
+  /^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), (?:0[1-9]|[12][0-9]|3[01]) (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4} (?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] GMT$/u;
 
 export const callbackEnvelopeSchema = z
   .strictObject({
@@ -139,6 +141,7 @@ export function validStateSetCookie(rawCookie: string): boolean {
   return (
     oauthStateSchema.safeParse(value).success &&
     expiresAttribute !== undefined &&
+    IMF_FIXDATE_PATTERN.test(expiresValue) &&
     !Number.isNaN(expiresAt) &&
     new Date(expiresAt).toUTCString() === expiresValue &&
     exactCookieAttributes(rawCookie, [
