@@ -28,6 +28,7 @@ const accessJwtHintSchema = z
     role: z.string().min(1),
     adminRole: z.string().nullable(),
     onboardingCompleted: z.boolean(),
+    sv: z.number().int().positive(),
     iat: z.number().int().nonnegative(),
     exp: z.number().int().positive(),
   })
