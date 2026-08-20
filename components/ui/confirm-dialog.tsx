@@ -1,7 +1,7 @@
 "use client";
 
 import { XIcon } from "@phosphor-icons/react/ssr";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { ReactNode, SyntheticEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,18 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const scrollOwnerRef = useRef<HTMLElement>(null);
+  const previousScrollOwnerOverflowYRef = useRef("");
+
+  const restoreScrollOwner = useCallback((): void => {
+    const scrollOwner = scrollOwnerRef.current;
+    if (scrollOwner !== null) {
+      scrollOwner.style.overflowY = previousScrollOwnerOverflowYRef.current;
+      scrollOwnerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => () => restoreScrollOwner(), [restoreScrollOwner]);
 
   function closeDialog() {
     dialogRef.current?.close();
@@ -51,10 +63,20 @@ export function ConfirmDialog({
   }
 
   function openDialog() {
-    dialogRef.current?.showModal();
+    const dialog = dialogRef.current;
+    if (dialog === null) return;
+
+    dialog.showModal();
+    const scrollOwner = dialog.closest("main");
+    if (scrollOwner instanceof HTMLElement) {
+      scrollOwnerRef.current = scrollOwner;
+      previousScrollOwnerOverflowYRef.current = scrollOwner.style.overflowY;
+      scrollOwner.style.overflowY = "hidden";
+    }
   }
 
   function returnFocus() {
+    restoreScrollOwner();
     triggerRef.current?.focus();
   }
 

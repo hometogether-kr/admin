@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { DefinitionList } from "@/components/ui/definition-list";
-import type { AdminUserSummary } from "@/features/users/contracts";
+import type { AdminUserDetail } from "@/features/users/contracts";
 import { CopyableUserId } from "@/features/users/copyable-user-id";
 import {
   displayOptionalText,
@@ -12,7 +12,7 @@ import {
 } from "@/features/users/labels";
 
 type UserSummaryProps = {
-  readonly user: AdminUserSummary;
+  readonly user: AdminUserDetail;
 };
 
 export function UserSummary({ user }: UserSummaryProps) {
@@ -28,6 +28,8 @@ export function UserSummary({ user }: UserSummaryProps) {
         items={[
           { label: "이름", value: displayOptionalText(user.name) },
           { label: "이메일", value: displayOptionalText(user.email) },
+          { label: "전화번호", value: displayOptionalText(user.phone) },
+          { label: "자기소개", value: displayOptionalText(user.introduction) },
           {
             label: "역할",
             value: (
@@ -37,6 +39,14 @@ export function UserSummary({ user }: UserSummaryProps) {
               >
                 {USER_ROLE_LABELS[user.role]}
               </Badge>
+            ),
+          },
+          {
+            label: "수정 일시",
+            value: (
+              <time dateTime={user.updatedAt}>
+                {formatUserDateTime(user.updatedAt)}
+              </time>
             ),
           },
           {

@@ -16,8 +16,8 @@ export function MediaSection({ media, roomId }: MediaSectionProps) {
         <h2 className="text-section font-semibold text-ink-strong" id="room-media-heading">
           미디어
         </h2>
-        <p className="text-body text-ink-subtle">
-          서명 URL은 화면에 노출하지 않습니다. 삭제는 확인 후 실행됩니다.
+        <p className="admin-keep-words text-body text-ink-subtle">
+          서명 URL은 숨깁니다. 삭제 전 대상을 확인해 주세요.
         </p>
       </div>
       {media.length === 0 ? (

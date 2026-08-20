@@ -3,8 +3,9 @@ import "server-only";
 import { readAdminApi } from "@/lib/api/client";
 import {
   adminUserListSchema,
-  nullableAdminUserSummarySchema,
+  adminUserDetailSchema,
   sanctionListSchema,
+  type AdminUserDetail,
   type AdminUserSummary,
   type Sanction,
   type UserId,
@@ -21,12 +22,12 @@ export async function getUsers(): Promise<readonly AdminUserSummary[]> {
 
 export async function getUser(
   userId: UserId,
-): Promise<AdminUserSummary | null> {
+): Promise<AdminUserDetail> {
   const operationId = "USR-02" as const;
   return readAdminApi({
     operationId,
     pathParameters: { id: userId },
-    responseSchema: nullableAdminUserSummarySchema,
+    responseSchema: adminUserDetailSchema,
     returnTo: `/users/${userId}`,
   });
 }

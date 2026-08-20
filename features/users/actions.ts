@@ -11,13 +11,13 @@ import {
 import type { AdminJsonBody } from "@/lib/api/client";
 import { AdminApiError, adminApiFailureResult } from "@/lib/api/errors";
 import {
-  nullableAdminUserSummarySchema,
-  disablementResponseSchema,
+  adminUserDetailSchema,
   sanctionFormSchema,
   sanctionSchema,
   studentProfileSchema,
   studentRejectionFormSchema,
   userMutationFormSchema,
+  userUpdateFormSchema,
   type UserId,
 } from "@/features/users/contracts";
 
@@ -30,26 +30,29 @@ async function validateStudentTarget(
     user = await read({
       operationId: "USR-02",
       pathParameters: { id: userId },
-      responseSchema: nullableAdminUserSummarySchema,
+      responseSchema: adminUserDetailSchema,
       returnTo: `/users/${userId}`,
     });
   } catch (cause) {
-    if (cause instanceof AdminApiError) return adminApiFailureResult(cause);
+    if (cause instanceof AdminApiError) {
+      return cause.status === 404
+        ? adminActionFailure("대상을 찾을 수 없습니다.")
+        : adminApiFailureResult(cause);
+    }
     throw cause;
   }
 
-  if (user === null) return adminActionFailure("대상을 찾을 수 없습니다.");
   if (user.role !== "student") {
     return adminActionFailure("학생 사용자에게만 인증 작업을 수행할 수 있습니다.");
   }
   return null;
 }
 
-export async function disableUserAction(
+export async function deleteUserAction(
   _previousResult: AdminActionResult,
   formData: FormData,
 ): Promise<AdminActionResult> {
-  const operationId = "USR-03" as const;
+  const operationId = "USR-09" as const;
   return runAdminMutationAction(operationId, ({ mutate }) => {
     const parsed = userMutationFormSchema.safeParse({
       userId: formData.get("userId"),
@@ -58,9 +61,37 @@ export async function disableUserAction(
 
     return mutate({
       pathParameters: { id: parsed.data.userId },
-      responseSchema: disablementResponseSchema,
+      responseSchema: null,
       revalidatePaths: [],
-      successMessage: "사용자를 비활성화했습니다.",
+      successMessage: "사용자를 삭제했습니다.",
+    });
+  });
+}
+
+export async function updateUserAction(
+  _previousResult: AdminActionResult,
+  formData: FormData,
+): Promise<AdminActionResult> {
+  const operationId = "USR-08" as const;
+  return runAdminMutationAction(operationId, ({ mutate }) => {
+    const parsed = userUpdateFormSchema.safeParse({
+      userId: formData.get("userId"),
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      introduction: formData.get("introduction"),
+    });
+    if (!parsed.success) {
+      return adminActionFailure("사용자 정보를 확인해 주세요.");
+    }
+
+    const { userId, ...body } = parsed.data;
+    return mutate({
+      body,
+      pathParameters: { id: userId },
+      responseSchema: adminUserDetailSchema,
+      revalidatePaths: ["/users", `/users/${userId}`],
+      successMessage: "사용자 정보를 수정했습니다.",
     });
   });
 }

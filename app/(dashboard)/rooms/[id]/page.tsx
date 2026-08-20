@@ -9,8 +9,10 @@ import { requireAdminSession } from "@/lib/auth/session";
 import { roomIdSchema } from "@/features/rooms/action-schema";
 import { LegacyRoomDetail } from "@/features/rooms/components/legacy-room-detail";
 import { RegistrationRoomDetail } from "@/features/rooms/components/registration-room-detail";
+import { RoomCoreEditForm } from "@/features/rooms/components/room-core-edit-form";
 import { RoomActionPanel } from "@/features/rooms/components/room-action-panel";
 import { RoomStatusBadge } from "@/features/rooms/components/room-status-badge";
+import { ROOM_STATUS_LABELS } from "@/features/rooms/constants";
 import { booleanLabel, formatDate } from "@/features/rooms/format";
 import { RoomMutationReceipt } from "@/features/rooms/mutation-receipt";
 import { readRoom } from "@/features/rooms/queries";
@@ -47,7 +49,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
             목록으로
           </Link>
         }
-        description="등록 계약 원본과 현재 운영 상태를 확인하고 필요한 관리 작업을 실행합니다."
+        description="등록 계약과 운영 상태를 확인·관리합니다."
         eyebrow={<span className="admin-break-anywhere font-mono">{roomId}</span>}
         title={roomTitle}
       />
@@ -59,18 +61,25 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
       </div>
       <DefinitionList items={isV2 ? [
         { label: "방 ID", value: room.roomId },
-        { label: "상태", value: room.roomStatus },
+        { label: "상태", value: ROOM_STATUS_LABELS[room.roomStatus] },
         { label: "공개 여부", value: booleanLabel(room.isPublic) },
         { label: "제출일", value: formatDate(room.submittedAt) },
         { label: "등록 계약 버전", value: 2 },
       ] : [
         { label: "방 ID", value: room.id },
         { label: "호스트 ID", value: room.hostId },
-        { label: "상태", value: room.roomStatus },
+        { label: "상태", value: ROOM_STATUS_LABELS[room.roomStatus] },
         { label: "공개 여부", value: booleanLabel(room.isPublic) },
         { label: "등록 계약 버전", value: "Legacy" },
       ]} />
       {isV2 ? <RegistrationRoomDetail room={room} /> : <LegacyRoomDetail room={room} />}
+      <RoomCoreEditForm
+        depositKrw={isV2 ? room.data.pricing.depositKrw : room.depositKrw}
+        description={isV2 ? room.data.descriptions.roomDescription : room.description}
+        maintenanceFeeKrw={isV2 ? room.data.pricing.maintenanceFeeKrw : room.maintenanceFeeKrw}
+        monthlyRentKrw={isV2 ? room.data.pricing.monthlyRentKrw : room.monthlyRentKrw}
+        roomId={roomId}
+      />
       <RoomActionPanel
         canHide={session.adminRole === "super"}
         currentAddressHidden={isV2 ? undefined : room.isAddressDetailHidden}
