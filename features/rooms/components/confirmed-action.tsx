@@ -5,6 +5,8 @@ import {
   cloneElement,
   isValidElement,
   useActionState,
+  useCallback,
+  useEffect,
   useRef,
   useState,
   type ReactNode,
@@ -58,11 +60,23 @@ export function ConfirmedAction({
   const formRef = useRef<HTMLFormElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const scrollOwnerRef = useRef<HTMLElement>(null);
+  const previousScrollOwnerOverflowYRef = useRef("");
   const [fieldError, setFieldError] = useState<string>();
   const [result, submit, pending] = useActionState(
     action,
     INITIAL_ADMIN_ACTION_RESULT,
   );
+
+  const restoreScrollOwner = useCallback((): void => {
+    const scrollOwner = scrollOwnerRef.current;
+    if (scrollOwner !== null) {
+      scrollOwner.style.overflowY = previousScrollOwnerOverflowYRef.current;
+      scrollOwnerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => () => restoreScrollOwner(), [restoreScrollOwner]);
 
   function closeDialog() {
     dialogRef.current?.close();
@@ -89,7 +103,21 @@ export function ConfirmedAction({
 
   function openDialog() {
     setFieldError(undefined);
-    dialogRef.current?.showModal();
+    const dialog = dialogRef.current;
+    if (dialog === null) return;
+
+    dialog.showModal();
+    const scrollOwner = dialog.closest("main");
+    if (scrollOwner instanceof HTMLElement) {
+      scrollOwnerRef.current = scrollOwner;
+      previousScrollOwnerOverflowYRef.current = scrollOwner.style.overflowY;
+      scrollOwner.style.overflowY = "hidden";
+    }
+  }
+
+  function handleClose() {
+    restoreScrollOwner();
+    triggerRef.current?.focus();
   }
 
   const dialogChildren = fieldError !== undefined
@@ -109,7 +137,7 @@ export function ConfirmedAction({
         className="admin-dialog m-auto w-[min(28rem,calc(100%-2.5rem))] rounded-dialog border border-line bg-surface p-0 text-ink shadow-dialog backdrop:bg-overlay"
         id={id}
         onCancel={handleCancel}
-        onClose={() => triggerRef.current?.focus()}
+        onClose={handleClose}
         ref={dialogRef}
       >
         <div className="grid gap-5 p-5 sm:p-6">

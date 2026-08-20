@@ -9,7 +9,8 @@ import type { AdminActionResult } from "@/lib/actions/result";
 const RECEIPT_STATE_KEY = "__hometogetherRoomMutationReceipt";
 const ROOM_DELETION_MESSAGE = "방을 삭제했습니다.";
 const ROOM_MUTATION_MESSAGES = new Set([
-  "방을 승인했습니다.",
+  "방을 승인·게시했습니다.",
+  "방 핵심 정보를 수정했습니다.",
   "방을 반려했습니다.",
   "수정을 요청했습니다.",
   "방을 숨겼습니다.",
