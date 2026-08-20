@@ -30,7 +30,8 @@ const bathroomTypeSchema = z.enum([
 
 const registrantSchema = z.strictObject({ registrantRelationship: registrantRelationshipSchema });
 const locationSchema = z.strictObject({
-  addressRoad: z.string(), addressDetail: z.string(), addressRegion: z.string(),
+  addressRoad: z.string().nullable(), addressDetail: z.string().nullable(),
+  addressRegion: z.string().nullable(),
   buildingType: buildingTypeSchema, buildingTypeOther: z.string().nullable(),
   approximateLocation: z.string().nullable(),
 });
@@ -38,7 +39,9 @@ const householdSchema = z.strictObject({
   areaRange: areaRangeSchema, totalRoomCount: z.number().int().nonnegative(),
   residentCount: z.number().int().nonnegative(), residentType: residentTypeSchema,
   residentGenderComposition: residentGenderSchema, elevatorAvailable: z.boolean(),
-  parkingAvailable: z.boolean(), parkingDescription: z.string().nullable(),
+  parkingAvailable: z.boolean(),
+  parkingType: z.enum(["freeAvailable", "freeFirstCome", "paid"]).nullable(),
+  parkingDescription: z.string().nullable(),
 });
 const privateSpaceSchema = z.strictObject({
   rentalSpaceType: rentalSpaceTypeSchema, rentalSpaceTypeOther: z.string().nullable(),
@@ -63,8 +66,8 @@ const pricingSchema = z.strictObject({
   maintenanceFeeKrw: z.number().int().nonnegative(), moveInAvailableAt: z.iso.datetime(),
   minStayMonths: z.number().int().positive(),
 });
-const photosSchema = z.strictObject({
-  photoIds: z.array(z.uuid()).readonly(), representativePhotoId: z.uuid(),
+const mediaSelectionSchema = z.strictObject({
+  mediaIds: z.array(z.uuid()).readonly(), representativeMediaId: z.uuid(),
 });
 const descriptionsSchema = z.strictObject({
   roomDescription: z.string().nullable(), currentResidentsDescription: z.string().nullable(),
@@ -74,6 +77,7 @@ const contactSchema = z.strictObject({
   contactName: z.string(), contactPhone: z.string(),
   preferredContactTime: z.enum(["morning", "afternoon", "lateAfternoon", "evening"]),
   preferredContactMethod: z.enum(["kakaoTalk", "phoneCall", "sms", "any"]),
+  roomPublication: z.literal(true).nullable(), noFraudPledge: z.literal(true).nullable(),
 });
 export const roomMediaSchema = z.strictObject({
   id: z.uuid(), displayOrder: z.number().int().nonnegative(), isRepresentative: z.boolean(),
@@ -88,7 +92,7 @@ export const registrationRoomSchema = z.strictObject({
   data: z.strictObject({
     registrant: registrantSchema, location: locationSchema, household: householdSchema,
     privateSpace: privateSpaceSchema, commonFacilities: commonFacilitiesSchema,
-    preferences: preferencesSchema, pricing: pricingSchema, photos: photosSchema,
+    preferences: preferencesSchema, pricing: pricingSchema, media: mediaSelectionSchema,
     descriptions: descriptionsSchema, contact: contactSchema,
   }),
   media: z.array(roomMediaSchema).readonly(),

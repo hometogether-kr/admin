@@ -16,6 +16,7 @@ import {
   notificationTemplateSchema,
   reasonSchema,
   revisionMessageSchema,
+  roomCoreUpdateFormSchema,
   roomIdSchema,
 } from "@/features/rooms/action-schema";
 import { roomMutationResponseSchema } from "@/features/rooms/detail-schema";
@@ -57,8 +58,32 @@ export async function approveRoom(
   void _previous;
   void _formData;
   return runAdminMutationAction("ROM-03", ({ mutate }) =>
-    mutateRoom({ roomId, successMessage: "방을 승인했습니다." }, mutate),
+    mutateRoom({ roomId, successMessage: "방을 승인·게시했습니다." }, mutate),
   );
+}
+
+export async function updateRoomCore(
+  roomId: string, _previous: AdminActionResult, formData: FormData,
+): Promise<AdminActionResult> {
+  return runAdminMutationAction("ROM-12", ({ mutate }) => {
+    const parsed = roomCoreUpdateFormSchema.safeParse({
+      monthlyRentKrw: formData.get("monthlyRentKrw"),
+      depositKrw: formData.get("depositKrw"),
+      maintenanceFeeKrw: formData.get("maintenanceFeeKrw"),
+      description: formData.get("description"),
+    });
+    if (!parsed.success) {
+      return adminActionFailure("가격과 설명 입력값을 확인해 주세요.");
+    }
+    return mutateRoom(
+      {
+        roomId,
+        body: parsed.data,
+        successMessage: "방 핵심 정보를 수정했습니다.",
+      },
+      mutate,
+    );
+  });
 }
 
 export async function rejectRoom(

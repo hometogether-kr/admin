@@ -14,3 +14,19 @@ export const memoSchema = z.preprocess(
   (value) => typeof value === "string" && value.trim() === "" ? null : value,
   z.string().trim().max(2_000).nullable(),
 );
+
+const currencyStringSchema = (minimum: number, maximum: number) => z.string()
+  .trim()
+  .regex(/^\d+$/)
+  .transform(Number)
+  .pipe(z.number().int().min(minimum).max(maximum));
+
+export const roomCoreUpdateFormSchema = z.strictObject({
+  monthlyRentKrw: currencyStringSchema(1, 100_000_000),
+  depositKrw: currencyStringSchema(0, 1_000_000_000),
+  maintenanceFeeKrw: currencyStringSchema(0, 1_000_000_000),
+  description: z.preprocess(
+    (value) => typeof value === "string" && value.trim() === "" ? null : value,
+    z.string().trim().max(2_000).nullable(),
+  ),
+});

@@ -51,12 +51,12 @@ export function RoomActionPanel({
       <div className="grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <ConfirmedAction
           action={approveRoom.bind(null, roomId)}
-          confirmLabel="승인"
-          description="제출된 방 정보를 승인합니다."
+          confirmLabel="승인·게시"
+          description="제출된 방 정보를 승인하고 사용자 화면에 게시합니다."
           id={`${idPrefix}-approve`}
           roomId={roomId}
-          title="방을 승인할까요?"
-          triggerLabel="승인"
+          title="방을 승인·게시할까요?"
+          triggerLabel="승인·게시"
           triggerVariant="primary"
         />
         <ConfirmedAction
@@ -169,7 +169,7 @@ export function RoomActionPanel({
         <ConfirmedAction
           action={deleteRoom.bind(null, roomId)}
           confirmLabel="방 삭제"
-          description="방을 소프트 삭제합니다. 취소하면 요청은 전송되지 않습니다."
+          description="방을 소프트 삭제합니다. 취소하면 삭제하지 않습니다."
           id={`${idPrefix}-delete`}
           roomId={roomId}
           title="방을 삭제할까요?"

@@ -7,14 +7,25 @@ import { UserMutationReceipt } from "@/features/users/mutation-receipt";
 import { SanctionHistory } from "@/features/users/sanction-history";
 import { SuperAdminActions } from "@/features/users/super-admin-actions";
 import { UserSummary } from "@/features/users/user-summary";
+import { UserEditForm } from "@/features/users/user-edit-form";
 import { VerificationActions } from "@/features/users/verification-actions";
-import { userIdSchema } from "@/features/users/contracts";
+import { userIdSchema, type UserId } from "@/features/users/contracts";
 import { getUser, getUserSanctions } from "@/features/users/queries";
+import { AdminApiError } from "@/lib/api/errors";
 import { requireAdminSession } from "@/lib/auth/session";
 
 type UserDetailPageProps = {
   readonly params: Promise<{ readonly id: string }>;
 };
+
+async function getUserOrNotFound(userId: UserId) {
+  try {
+    return await getUser(userId);
+  } catch (cause) {
+    if (cause instanceof AdminApiError && cause.status === 404) notFound();
+    throw cause;
+  }
+}
 
 export default async function UserDetailPage({
   params,
@@ -23,10 +34,10 @@ export default async function UserDetailPage({
   const parsedId = userIdSchema.safeParse(resolvedParams.id);
   if (!parsedId.success) notFound();
 
-  const user = await getUser(parsedId.data);
-  if (user === null) notFound();
-
-  const session = await requireAdminSession();
+  const [user, session] = await Promise.all([
+    getUserOrNotFound(parsedId.data),
+    requireAdminSession(),
+  ]);
   const isSuperAdmin = session.adminRole === "super";
   const sanctions = isSuperAdmin
     ? await getUserSanctions(parsedId.data)
@@ -45,12 +56,15 @@ export default async function UserDetailPage({
         }
         title={displayOptionalText(user.name)}
       />
-      <UserMutationReceipt userId={user.id} />
+      <UserMutationReceipt surface="detail" userId={user.id} />
       <UserSummary user={user} />
+      {isSuperAdmin ? <UserEditForm user={user} /> : null}
       {user.role === "student" ? (
         <VerificationActions userId={user.id} />
       ) : null}
-      {isSuperAdmin ? <SuperAdminActions userId={user.id} /> : null}
+      {isSuperAdmin ? (
+        <SuperAdminActions canDelete={session.sub !== user.id} userId={user.id} />
+      ) : null}
       {sanctions === null ? null : (
         <SanctionHistory sanctions={sanctions} />
       )}

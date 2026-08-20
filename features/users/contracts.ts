@@ -43,7 +43,13 @@ export const adminUserSummarySchema = z
 export type AdminUserSummary = z.infer<typeof adminUserSummarySchema>;
 
 export const adminUserListSchema = z.array(adminUserSummarySchema).readonly();
-export const nullableAdminUserSummarySchema = adminUserSummarySchema.nullable();
+export const adminUserDetailSchema = adminUserSummarySchema.extend({
+  phone: z.string().nullable(),
+  introduction: z.string().nullable(),
+  onboardingCompletedAt: z.iso.datetime().nullable(),
+  updatedAt: z.iso.datetime(),
+});
+export type AdminUserDetail = z.infer<typeof adminUserDetailSchema>;
 
 export const disablementResponseSchema = z
   .object({ success: z.boolean() })
@@ -102,6 +108,25 @@ export const studentProfileSchema = z
 export const userMutationFormSchema = z
   .object({ userId: userIdSchema })
   .strict();
+
+export const userUpdateFormSchema = z
+  .strictObject({
+    userId: userIdSchema,
+    name: z.string().trim().min(1).max(100),
+    email: z.email().max(320),
+    phone: z
+      .string()
+      .trim()
+      .regex(/^(?:010-?\d{4}-?\d{4}|\+82\s?10-?\d{4}-?\d{4})$/u),
+    introduction: z.string().trim().max(1_000),
+  })
+  .transform((input) => ({
+    userId: input.userId,
+    name: input.name,
+    email: input.email,
+    phone: input.phone,
+    ...(input.introduction === "" ? {} : { introduction: input.introduction }),
+  }));
 
 export const studentRejectionFormSchema = z
   .object({
