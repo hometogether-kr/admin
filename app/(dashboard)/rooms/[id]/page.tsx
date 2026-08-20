@@ -72,7 +72,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
       ]} />
       {isV2 ? <RegistrationRoomDetail room={room} /> : <LegacyRoomDetail room={room} />}
       <RoomActionPanel
-        canHide={session.role !== "roomManager"}
+        canHide={session.adminRole === "super"}
         currentAddressHidden={isV2 ? undefined : room.isAddressDetailHidden}
         currentMemo={isV2 ? undefined : room.internalMemo}
         roomId={roomId}

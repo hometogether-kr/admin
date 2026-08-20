@@ -26,7 +26,9 @@ const accessJwtHintSchema = z
   .strictObject({
     sub: z.uuid(),
     role: z.string().min(1),
+    adminRole: z.string().nullable(),
     onboardingCompleted: z.boolean(),
+    sv: z.number().int().positive(),
     iat: z.number().int().nonnegative(),
     exp: z.number().int().positive(),
   })
@@ -187,17 +189,17 @@ export async function refreshAdminSession(): Promise<RefreshAdminSessionResult> 
       new AdminRefreshError("refresh_subject_mismatch", response.status),
     );
   }
-  const role = z.enum(ADMIN_ROLES).safeParse(accessHint.data.role);
-  if (!role.success) {
+  const adminRole = z.enum(ADMIN_ROLES).safeParse(accessHint.data.adminRole);
+  if (!adminRole.success) {
     return failedRefresh(
       new AdminRefreshError("refresh_role_unsupported", response.status, {
-        cause: role.error,
+        cause: adminRole.error,
       }),
     );
   }
   const replacement = adminSessionInputSchema.safeParse({
     sub: current.sub,
-    role: role.data,
+    adminRole: adminRole.data,
     displayName: current.displayName,
     accessToken: tokenPair.data.accessToken,
     refreshToken: tokenPair.data.refreshToken,
