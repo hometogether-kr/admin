@@ -45,19 +45,19 @@ export default async function DashboardLayout({
       sessionResult satisfies never;
   }
 
-  const { displayName, role } = sessionResult.session;
+  const { displayName, adminRole } = sessionResult.session;
   const requestedMenuId = requestHeaders.get(ADMIN_MENU_REQUEST_HEADER);
   const requestedMenu = ADMIN_MENU_ITEMS.find(
     (item) => item.id === requestedMenuId,
   );
   if (
     requestedMenu !== undefined &&
-    !roleCanAccessMenu(role, requestedMenu.id)
+    !roleCanAccessMenu(adminRole, requestedMenu.id)
   ) {
     forbidden();
   }
 
-  const allowedMenuIds = ADMIN_ROLE_MENUS[role];
+  const allowedMenuIds = ADMIN_ROLE_MENUS[adminRole];
   const navigationItems: readonly ShellNavigationItem[] = ADMIN_MENU_ITEMS
     .filter((item) => allowedMenuIds.some((menuId) => menuId === item.id))
     .map((item) => ({ href: item.path, id: item.id, label: item.label }));
@@ -80,7 +80,7 @@ export default async function DashboardLayout({
                 {safeDisplayName}
               </span>
               <span className="text-label text-ink-subtle">
-                {ADMIN_ROLE_LABELS[role]}
+                {ADMIN_ROLE_LABELS[adminRole]}
               </span>
             </div>
             <form action="/auth/logout" method="post">

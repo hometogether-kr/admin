@@ -29,10 +29,10 @@ export function getAdminOperation(operationId: AdminOperationId): AdminOperation
 
 export function authorizeAdminSessionForOperation(
   operationId: AdminOperationId,
-  session: { readonly role: AdminRole },
+  session: { readonly adminRole: AdminRole },
 ): AdminOperation {
   const operation = getAdminOperation(operationId);
-  if (!operation.roles.some((role) => role === session.role)) {
+  if (!operation.roles.some((role) => role === session.adminRole)) {
     forbidden();
   }
   return operation;

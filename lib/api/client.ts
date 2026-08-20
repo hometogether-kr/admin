@@ -37,7 +37,7 @@ import type { AdminSessionInput } from "@/lib/auth/session-schema";
 
 export type { AdminJsonBody, AdminJsonValue } from "@/lib/api/transport";
 
-type AdminApiSession = Pick<AdminSessionInput, "role" | "accessToken">;
+type AdminApiSession = Pick<AdminSessionInput, "adminRole" | "accessToken">;
 
 type AdminRequestBase = {
   readonly pathParameters?: AdminPathParameters;

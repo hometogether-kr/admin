@@ -49,7 +49,7 @@ export default async function Home({ searchParams }: HomePageProps) {
   const sessionResult = await readAdminSession();
   switch (sessionResult.kind) {
     case "valid":
-      redirect(ADMIN_ROLE_DEFAULT_ROUTES[sessionResult.session.role]);
+      redirect(ADMIN_ROLE_DEFAULT_ROUTES[sessionResult.session.adminRole]);
     case "invalid":
     case "expired":
       redirect(`/auth/refresh?${new URLSearchParams({ returnTo: "/" })}`);

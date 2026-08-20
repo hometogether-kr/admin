@@ -26,7 +26,7 @@ export type AdminJsonValue =
 
 export type AdminJsonBody = Readonly<Record<string, AdminJsonValue>>;
 
-type AdminApiSession = Pick<AdminSessionInput, "role" | "accessToken">;
+type AdminApiSession = Pick<AdminSessionInput, "adminRole" | "accessToken">;
 
 export type AdminTransportRequest = {
   readonly operationId: AdminOperationId;

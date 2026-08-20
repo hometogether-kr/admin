@@ -11,7 +11,16 @@ export const KAKAO_CALLBACK_PATH = "/auth/kakao/callback";
 const KAKAO_AUTHORIZE_ORIGIN = "https://kauth.kakao.com";
 const KAKAO_AUTHORIZE_PATH = "/oauth/authorize";
 const LOOPBACK_HOSTNAMES = ["127.0.0.1", "localhost", "[::1]"] as const;
-const USER_ROLES = ["student", "host", ...ADMIN_ROLES] as const;
+const USER_ROLES = [
+  "student",
+  "host",
+  "admin",
+  "superAdmin",
+  "roomManager",
+  "reservationManager",
+  "paymentManager",
+  "csManager",
+] as const;
 const callbackCodeSchema = z
   .string()
   .min(1)
@@ -30,6 +39,7 @@ export const callbackEnvelopeSchema = z
       .strictObject({
         id: z.uuid(),
         role: z.enum(USER_ROLES),
+        adminRole: z.enum(ADMIN_ROLES).nullable(),
         name: z.string().min(1).nullable(),
         email: z.email().nullable(),
         phone: z.string().regex(/^\+8210\d{8}$/u).nullable(),
