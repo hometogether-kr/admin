@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { ADMIN_ROLES } from "@/lib/contracts/admin-role";
+
 export const USER_ROLES = [
   "student",
   "host",
@@ -33,6 +35,7 @@ export const adminUserSummarySchema = z
     name: z.string().nullable(),
     email: z.email().nullable(),
     role: userRoleSchema,
+    adminRole: z.enum(ADMIN_ROLES).nullable(),
     createdAt: z.iso.datetime(),
   })
   .strict();

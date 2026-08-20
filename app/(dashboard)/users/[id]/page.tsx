@@ -27,7 +27,7 @@ export default async function UserDetailPage({
   if (user === null) notFound();
 
   const session = await requireAdminSession();
-  const isSuperAdmin = session.role === "superAdmin";
+  const isSuperAdmin = session.adminRole === "super";
   const sanctions = isSuperAdmin
     ? await getUserSanctions(parsedId.data)
     : null;
