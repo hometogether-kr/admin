@@ -185,11 +185,11 @@ export async function completeKakaoOAuth(
       stateClearCookie,
     );
   }
-  const role = z.enum(ADMIN_ROLES).safeParse(envelope.data.user.role);
-  if (!role.success) {
+  const adminRole = z.enum(ADMIN_ROLES).safeParse(envelope.data.user.adminRole);
+  if (!adminRole.success) {
     return callbackFailure(
       new OAuthFlowError("oauth_role_unsupported", response.status, {
-        cause: role.error,
+        cause: adminRole.error,
       }),
       stateClearCookie,
     );
@@ -198,14 +198,14 @@ export async function completeKakaoOAuth(
   try {
     const sealedSession = await sealAdminSession({
       sub: envelope.data.user.id,
-      role: role.data,
+      adminRole: adminRole.data,
       displayName: envelope.data.user.name,
       accessToken: envelope.data.accessToken,
       refreshToken: envelope.data.refreshToken,
     });
     return {
       ok: true,
-      redirectTo: ADMIN_ROLE_DEFAULT_ROUTES[role.data],
+      redirectTo: ADMIN_ROLE_DEFAULT_ROUTES[adminRole.data],
       sealedSession,
       stateClearCookie,
     };

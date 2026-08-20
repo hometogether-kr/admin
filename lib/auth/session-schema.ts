@@ -4,13 +4,13 @@ import { z } from "zod";
 
 import { ADMIN_ROLES } from "@/lib/api/operations";
 
-export const ADMIN_SESSION_VERSION = 1 as const;
+export const ADMIN_SESSION_VERSION = 2 as const;
 export const MAX_ADMIN_SESSION_AGE_SECONDS = 604_800 as const;
 export const MAX_ADMIN_SESSION_COOKIE_BYTES = 3_800 as const;
 
 const sessionIdentityFields = {
   sub: z.uuid(),
-  role: z.enum(ADMIN_ROLES),
+  adminRole: z.enum(ADMIN_ROLES),
   displayName: z.string().min(1).nullable(),
   accessToken: z.string().min(1),
   refreshToken: z.string().min(1),

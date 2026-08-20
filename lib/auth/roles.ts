@@ -25,7 +25,7 @@ export type AdminDefaultRoute = (typeof ADMIN_MENU_ITEMS)[number]["path"];
 export const ADMIN_MENU_REQUEST_HEADER = "x-hometogether-admin-menu-id";
 
 export const ADMIN_ROLE_MENUS = {
-  admin: [
+  super: [
     "users",
     "rooms",
     "reservations",
@@ -35,38 +35,26 @@ export const ADMIN_ROLE_MENUS = {
     "supports",
     "notificationLogs",
   ],
-  superAdmin: [
-    "users",
-    "rooms",
-    "reservations",
-    "contracts",
-    "payments",
-    "reports",
-    "supports",
-    "notificationLogs",
-  ],
-  roomManager: ["rooms"],
-  reservationManager: ["reservations"],
-  paymentManager: ["payments"],
-  csManager: ["reports", "supports", "notificationLogs"],
+  room: ["rooms"],
+  reservation: ["reservations"],
+  payment: ["payments"],
+  cs: ["reports", "supports", "notificationLogs"],
 } as const satisfies Record<AdminRole, readonly AdminMenuId[]>;
 
 export const ADMIN_ROLE_DEFAULT_ROUTES = {
-  admin: "/users",
-  superAdmin: "/users",
-  roomManager: "/rooms",
-  reservationManager: "/reservations",
-  paymentManager: "/payments",
-  csManager: "/reports",
+  super: "/users",
+  room: "/rooms",
+  reservation: "/reservations",
+  payment: "/payments",
+  cs: "/reports",
 } as const satisfies Record<AdminRole, AdminDefaultRoute>;
 
 export const ADMIN_ROLE_LABELS = {
-  admin: "관리자",
-  superAdmin: "최고 관리자",
-  roomManager: "방 관리자",
-  reservationManager: "예약 관리자",
-  paymentManager: "결제 관리자",
-  csManager: "고객 지원 관리자",
+  super: "최고 관리자",
+  room: "방 관리자",
+  reservation: "예약 관리자",
+  payment: "결제 관리자",
+  cs: "고객 지원 관리자",
 } as const satisfies Record<AdminRole, string>;
 
 export const adminRoleSchema = z.enum(ADMIN_ROLES);
