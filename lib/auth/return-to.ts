@@ -22,10 +22,14 @@ const LIST_ROUTE_RULES: readonly ListRouteRule[] = [
     path: "/supports",
     queryKeys: ["status", "inquiryType", "page", "limit"],
   },
+  {
+    path: "/host-consultations",
+    queryKeys: ["regionType", "housingType", "status", "page", "limit"],
+  },
   { path: "/notification-logs", queryKeys: ["page", "limit"] },
 ] as const;
 
-const DETAIL_PATH_PATTERN = /^\/(?:users|rooms|reservations|contracts|payments|reports|supports|notification-logs)\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
+const DETAIL_PATH_PATTERN = /^\/(?:users|rooms|reservations|contracts|payments|reports|supports|host-consultations|notification-logs)\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 const RAW_UNSAFE_PATTERN = /[\u0000-\u001f\u007f-\u009f\\#@]/u;
 const ENCODED_UNSAFE_PATTERN = /%(?:25)*(?:2f|5c|0[0-9a-f]|1[0-9a-f]|[789][0-9a-f]|23|40)/iu;
 const MALFORMED_PERCENT_PATTERN = /%(?![0-9a-f]{2})/iu;

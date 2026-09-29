@@ -14,6 +14,7 @@ export type AdminOperationDomain =
   | "payments"
   | "reports"
   | "supports"
+  | "hostConsultations"
   | "notificationLogs";
 
 export type AdminOperationContract = {
@@ -70,6 +71,8 @@ export const ADMIN_OPERATIONS = [
   { id: "SUP-02", domain: "supports", method: "GET", path: "/admin/supports/{id}", roles: ["cs", "super"], successStatus: 200, response: "Support", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },
   { id: "SUP-03", domain: "supports", method: "POST", path: "/admin/supports/{id}/resolutions", roles: ["cs", "super"], successStatus: 201, response: "Support", query: [], body: ["resolution", "adminNote?"], requestSource: "production-swagger", rolesSource: "local-controller" },
   { id: "SUP-04", domain: "supports", method: "POST", path: "/admin/supports/{id}/dismissals", roles: ["cs", "super"], successStatus: 201, response: "Support", query: [], body: ["resolution", "adminNote?"], requestSource: "production-swagger", rolesSource: "local-controller" },
+  { id: "HCR-01", domain: "hostConsultations", method: "GET", path: "/admin/host-consultation-requests", roles: ["cs", "super"], successStatus: 200, response: "{items,total,page,limit,totalPages}", query: ["regionType", "housingType", "status", "page", "limit"], body: [], requestSource: "local-controller-supplement", rolesSource: "local-controller" },
+  { id: "HCR-02", domain: "hostConsultations", method: "GET", path: "/admin/host-consultation-requests/{id}", roles: ["cs", "super"], successStatus: 200, response: "HostConsultationRequest", query: [], body: [], requestSource: "local-controller-supplement", rolesSource: "local-controller" },
   { id: "NOT-01", domain: "notificationLogs", method: "GET", path: "/admin/notification-logs", roles: ["cs", "super"], successStatus: 200, response: "{items,total,page,limit}", query: ["page", "limit"], body: [], requestSource: "production-swagger", rolesSource: "local-controller" },
   { id: "NOT-02", domain: "notificationLogs", method: "GET", path: "/admin/notification-logs/{id}", roles: ["cs", "super"], successStatus: 200, response: "MaskedNotificationLog", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },
   { id: "NOT-03", domain: "notificationLogs", method: "POST", path: "/admin/notification-logs/{id}/resend", roles: ["cs", "super"], successStatus: 204, response: "void", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },

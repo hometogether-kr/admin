@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "tsx --test features/host-consultations/host-consultations.test.mts"
   },
   "dependencies": {
     "@phosphor-icons/react": "2.1.10",
@@ -28,6 +29,7 @@
     "react-grab": "0.1.48",
     "react-scan": "0.5.7",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

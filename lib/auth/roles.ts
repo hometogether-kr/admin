@@ -13,6 +13,11 @@ export const ADMIN_MENU_ITEMS = [
   { id: "reports", label: "Reports", path: "/reports" },
   { id: "supports", label: "Supports", path: "/supports" },
   {
+    id: "hostConsultations",
+    label: "상담 신청",
+    path: "/host-consultations",
+  },
+  {
     id: "notificationLogs",
     label: "Notification Logs",
     path: "/notification-logs",
@@ -33,12 +38,13 @@ export const ADMIN_ROLE_MENUS = {
     "payments",
     "reports",
     "supports",
+    "hostConsultations",
     "notificationLogs",
   ],
   room: ["rooms"],
   reservation: ["reservations"],
   payment: ["payments"],
-  cs: ["reports", "supports", "notificationLogs"],
+  cs: ["reports", "supports", "hostConsultations", "notificationLogs"],
 } as const satisfies Record<AdminRole, readonly AdminMenuId[]>;
 
 export const ADMIN_ROLE_DEFAULT_ROUTES = {

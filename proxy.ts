@@ -32,6 +32,7 @@ export const config = {
     "/payments/:path*",
     "/reports/:path*",
     "/supports/:path*",
+    "/host-consultations/:path*",
     "/notification-logs/:path*",
   ],
 };
