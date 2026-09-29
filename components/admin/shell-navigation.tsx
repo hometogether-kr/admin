@@ -9,6 +9,7 @@ import {
   FlagIcon,
   HouseLineIcon,
   ListIcon,
+  PhoneCallIcon,
   UsersIcon,
   XIcon,
 } from "@phosphor-icons/react";
@@ -34,6 +35,7 @@ const SHELL_MENU_ICONS = {
   payments: CreditCardIcon,
   reports: FlagIcon,
   supports: ChatsCircleIcon,
+  hostConsultations: PhoneCallIcon,
   notificationLogs: BellRingingIcon,
 } as const;
 
