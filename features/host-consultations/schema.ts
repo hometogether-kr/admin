@@ -19,6 +19,7 @@ export const hostConsultationSchema = z
     regionId: z.uuid().nullable(),
     regionName: z.string().min(1).max(160),
     customUniversityName: z.string().min(1).max(160).nullable(),
+    customSubwayName: z.string().min(1).max(160).nullable(),
     roomCount: z.number().int().min(1).max(3),
     hasAirConditioner: z.boolean(),
     housingType: z.enum(HOST_CONSULTATION_HOUSING_TYPES),

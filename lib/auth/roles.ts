@@ -14,7 +14,7 @@ export const ADMIN_MENU_ITEMS = [
   { id: "supports", label: "Supports", path: "/supports" },
   {
     id: "hostConsultations",
-    label: "상담 신청",
+    label: "Consultations",
     path: "/host-consultations",
   },
   {

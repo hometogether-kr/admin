@@ -2,6 +2,7 @@ export const HOST_CONSULTATION_REGION_TYPES = [
   "university",
   "subway",
   "custom_university",
+  "custom_subway",
 ] as const;
 
 export const HOST_CONSULTATION_HOUSING_TYPES = [

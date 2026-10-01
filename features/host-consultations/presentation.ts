@@ -11,6 +11,7 @@ export const HOST_CONSULTATION_REGION_OPTIONS = [
   { label: "대학교", value: "university" },
   { label: "지하철역", value: "subway" },
   { label: "대학교 직접 입력", value: "custom_university" },
+  { label: "지하철역 직접 입력", value: "custom_subway" },
 ] as const;
 
 export const HOST_CONSULTATION_HOUSING_OPTIONS = [
@@ -30,6 +31,7 @@ const REGION_TYPE_LABELS = {
   university: "대학교",
   subway: "지하철역",
   custom_university: "대학교 직접 입력",
+  custom_subway: "지하철역 직접 입력",
 } as const satisfies Record<HostConsultationRegionType, string>;
 
 const HOUSING_TYPE_LABELS = {
