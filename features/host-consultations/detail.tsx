@@ -88,6 +88,10 @@ export function HostConsultationDetail({
               label: "직접 입력 대학교",
               value: consultation.customUniversityName ?? "해당 없음",
             },
+            {
+              label: "직접 입력 지하철역",
+              value: consultation.customSubwayName ?? "해당 없음",
+            },
             { label: "방 개수", value: `${consultation.roomCount}개` },
             {
               label: "에어컨",
