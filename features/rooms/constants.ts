@@ -1,5 +1,7 @@
 import type { BadgeVariant } from "@/components/ui/badge";
 
+export const REGISTRATION_BUILDING_TYPES = ["apartment", "officetel", "shareHouse", "detachedHouse", "other"] as const;
+
 export const ROOM_STATUSES = [
   "draft",
   "submitted",

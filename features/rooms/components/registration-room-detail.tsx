@@ -22,8 +22,20 @@ export function RegistrationRoomDetail({ room }: RegistrationRoomDetailProps) {
       ]} title="등록자" />
       <DetailSection id="location-heading" items={[
         { label: "도로명 주소", value: displayValue(data.location.addressRoad) },
+        { label: "지번 주소", value: displayValue(data.location.addressJibun) },
         { label: "상세 주소", value: displayValue(data.location.addressDetail) },
         { label: "지역", value: displayValue(data.location.addressRegion) },
+        { label: "시·도", value: displayValue(data.location.sido) },
+        { label: "시·군·구", value: displayValue(data.location.sigungu) },
+        { label: "법정동", value: displayValue(data.location.legalDongName) },
+        { label: "법정동 코드", value: displayValue(data.location.legalDongCode) },
+        { label: "건물 동", value: displayValue(data.location.buildingDong) },
+        { label: "호수", value: displayValue(data.location.unitNumber) },
+        { label: "층수", value: displayValue(data.location.floor) },
+        { label: "위도", value: displayValue(data.location.latitude) },
+        { label: "경도", value: displayValue(data.location.longitude) },
+        { label: "주소 확인일", value: formatDate(data.location.addressVerifiedAt) },
+        { label: "주소 확인 관리자 ID", value: displayValue(data.location.addressVerifiedBy) },
         { label: "건물 유형", value: registrationValueLabel(data.location.buildingType) },
         { label: "기타 건물 유형", value: displayValue(data.location.buildingTypeOther) },
         { label: "근사 위치", value: displayValue(data.location.approximateLocation) },
@@ -42,7 +54,6 @@ export function RegistrationRoomDetail({ room }: RegistrationRoomDetailProps) {
       <DetailSection id="private-space-heading" items={[
         { label: "임대 공간", value: registrationValueLabel(data.privateSpace.rentalSpaceType) },
         { label: "기타 임대 공간", value: displayValue(data.privateSpace.rentalSpaceTypeOther) },
-        { label: "개인실 크기", value: registrationValueLabel(data.privateSpace.privateRoomSize) },
         { label: "개인실 옵션", value: registrationValueListLabel(data.privateSpace.privateRoomOptions) },
       ]} title="개인 공간" />
       <DetailSection id="common-facilities-heading" items={[
