@@ -18,8 +18,14 @@ import {
   revisionMessageSchema,
   roomCoreUpdateFormSchema,
   roomIdSchema,
+  roomMetadataFormSchema,
+  readRoomAddressForm,
+  buildRoomMetadataPatch,
+  buildRoomAddressPatch,
+  type RoomMetadataValues,
 } from "@/features/rooms/action-schema";
-import { roomMutationResponseSchema } from "@/features/rooms/detail-schema";
+import { roomMutationResponseSchema, roomPropertyMutationResponseSchema } from "@/features/rooms/detail-schema";
+import type { RegistrationLocation } from "@/features/rooms/registration-schema";
 
 type MutationInput = {
   readonly body?: AdminJsonBody;
@@ -27,6 +33,7 @@ type MutationInput = {
   readonly roomId: string;
   readonly successMessage: string;
   readonly noContent?: boolean;
+  readonly propertyResponse?: boolean;
 };
 
 async function mutateRoom(
@@ -46,10 +53,53 @@ async function mutateRoom(
       ...(mediaId?.success ? { mediaId: mediaId.data } : {}),
     },
     ...(input.body === undefined ? {} : { body: input.body }),
-    responseSchema: input.noContent ? null : roomMutationResponseSchema,
+    responseSchema: input.noContent ? null : input.propertyResponse
+      ? roomPropertyMutationResponseSchema : roomMutationResponseSchema,
     revalidatePaths: [],
     successMessage: input.successMessage,
   });
+}
+
+export async function updateRoomMetadata(
+  roomId: string, original: RoomMetadataValues, _previous: AdminActionResult, formData: FormData,
+): Promise<AdminActionResult> {
+  return runAdminMutationAction("ROM-13", ({ mutate }) => {
+    const parsed = roomMetadataFormSchema.safeParse({
+      subtitle: formData.get("subtitle"), floor: formData.get("floor"),
+    });
+    if (!parsed.success) return adminActionFailure("소제목은 200자 이하, 층수는 정수로 입력해 주세요.");
+    const body = buildRoomMetadataPatch(parsed.data, original);
+    if (Object.keys(body).length === 0) return adminActionFailure("변경된 내용이 없습니다.");
+    return mutateRoom({
+      roomId, body, propertyResponse: true, successMessage: "소제목·층수를 저장했습니다.",
+    }, mutate);
+  });
+}
+
+export async function updateRoomAddress(
+  roomId: string, original: RegistrationLocation, _previous: AdminActionResult, formData: FormData,
+): Promise<AdminActionResult> {
+  return runAdminMutationAction("ROM-14", ({ mutate }) => {
+    const parsed = readRoomAddressForm(formData);
+    if (!parsed.success) return adminActionFailure("주소 입력값을 확인해 주세요. 위도·경도는 함께 입력해야 합니다.");
+    const body = buildRoomAddressPatch(parsed.data, original);
+    if (Object.keys(body).length === 0) return adminActionFailure("변경된 내용이 없습니다.");
+    return mutateRoom({
+      roomId, body, propertyResponse: true, successMessage: "주소를 저장했습니다. 주소 확인이 필요합니다.",
+    }, mutate);
+  });
+}
+
+export async function verifyRoomAddress(
+  roomId: string, _previous: AdminActionResult, _formData: FormData,
+): Promise<AdminActionResult> {
+  void _previous;
+  void _formData;
+  return runAdminMutationAction("ROM-15", ({ mutate }) =>
+    mutateRoom({
+      roomId, propertyResponse: true, successMessage: "주소·법정동 확인을 완료했습니다.",
+    }, mutate),
+  );
 }
 
 export async function approveRoom(

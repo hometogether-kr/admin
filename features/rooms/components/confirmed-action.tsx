@@ -32,6 +32,7 @@ type ConfirmedActionProps = {
   readonly children?: ReactNode;
   readonly confirmLabel: string;
   readonly description: string;
+  readonly disabled?: boolean;
   readonly id: string;
   readonly roomId: string;
   readonly title: string;
@@ -49,6 +50,7 @@ export function ConfirmedAction({
   children,
   confirmLabel,
   description,
+  disabled,
   id,
   roomId,
   title,
@@ -128,7 +130,7 @@ export function ConfirmedAction({
   return (
     <form action={submit} className="grid gap-2" ref={formRef}>
       <RoomMutationCompletion result={result} roomId={roomId} />
-      <Button onClick={openDialog} ref={triggerRef} variant={triggerVariant}>
+      <Button disabled={disabled || pending} onClick={openDialog} ref={triggerRef} variant={triggerVariant}>
         {triggerLabel}
       </Button>
       <dialog

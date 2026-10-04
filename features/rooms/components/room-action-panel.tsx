@@ -20,6 +20,7 @@ import { ConfirmedAction } from "@/features/rooms/components/confirmed-action";
 
 type RoomActionPanelProps = {
   readonly canHide: boolean;
+  readonly canApprove: boolean;
   readonly currentAddressHidden?: boolean;
   readonly currentMemo?: string | null;
   readonly roomId: string;
@@ -32,6 +33,7 @@ const notificationOptions = ROOM_NOTIFICATION_TEMPLATES.map((template) => ({
 
 export function RoomActionPanel({
   canHide,
+  canApprove,
   currentAddressHidden,
   currentMemo,
   roomId,
@@ -51,6 +53,7 @@ export function RoomActionPanel({
       <div className="grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <ConfirmedAction
           action={approveRoom.bind(null, roomId)}
+          disabled={!canApprove}
           confirmLabel="승인·게시"
           description="제출된 방 정보를 승인하고 사용자 화면에 게시합니다."
           id={`${idPrefix}-approve`}
