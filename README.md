@@ -44,6 +44,20 @@ alias는 현재 retired/unavailable 상태로 사용할 수 없습니다. 배포
 `https://admin.hometogether.kr`를 사용하며, 로컬 개발 환경에서만
 localhost/loopback HTTP를 허용합니다.
 
+## 매물 데이터 관리
+
+`room`·`super` 관리자는 제출된 v2 매물 상세(`/rooms/:id`)에서 다음 작업을 할 수 있습니다.
+
+- 소제목·층수: `PATCH /admin/rooms/:id/metadata`. 변경된 필드만 전송하며 빈 값은 null로 삭제합니다. 소제목 수정만으로 추정 층수를 수동 층수로 바꾸지 않습니다.
+- 주소·법정동·유형·좌표 보정: `PATCH /admin/rooms/:id/address`. 건물 유형은 5종이며 기타는 자유입력이 필요합니다. 보존된 빌라는 조회 후 신규 유형으로 재선택합니다.
+- 주소 확인: `POST /admin/rooms/:id/address/verify`. 주소 저장과 별도이며 저장하지 않은 변경이 있거나 필수 주소 정보가 없으면 실행할 수 없습니다.
+
+주소 변경은 확인 상태를 초기화하고 게시된 매물을 비공개·재검토 상태로 전환합니다. 이전 건물의 좌표를 재사용하지 않도록 주소 수정 시 좌표 입력을 비웁니다. 좌표는 유효한 위도·경도 쌍으로만 저장합니다. 주소 확인 후에도 승인·게시는 별도로 실행해야 합니다.
+
+저장 성공 후 상세를 다시 조회하여 서버 생성 제목·층수·확인 상태를 표시합니다. 신규 세 API는 기존 핵심 정보 수정 응답(`id`)과 다른 `roomId`, `title`, `subtitle`, `floor`, `addressVerifiedAt` 응답을 검증합니다. Legacy 상세 및 가격·설명 수정 기능은 유지합니다. Client 화면·지도 연동은 이 작업 범위에 포함하지 않습니다.
+
+검증 명령: `npm test`, `npx tsc --noEmit`, `npm run lint`, `npm run build`.
+
 ## 운영 배포 체크리스트
 
 - 관리자 앱을 환경에 맞는 `https://dev-admin.hometogether.kr` 또는

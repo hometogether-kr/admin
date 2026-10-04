@@ -10,6 +10,8 @@ import { roomIdSchema } from "@/features/rooms/action-schema";
 import { LegacyRoomDetail } from "@/features/rooms/components/legacy-room-detail";
 import { RegistrationRoomDetail } from "@/features/rooms/components/registration-room-detail";
 import { RoomCoreEditForm } from "@/features/rooms/components/room-core-edit-form";
+import { RoomMetadataEditForm } from "@/features/rooms/components/room-metadata-edit-form";
+import { RoomAddressEditForm } from "@/features/rooms/components/room-address-edit-form";
 import { RoomActionPanel } from "@/features/rooms/components/room-action-panel";
 import { RoomStatusBadge } from "@/features/rooms/components/room-status-badge";
 import { ROOM_STATUS_LABELS } from "@/features/rooms/constants";
@@ -36,7 +38,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
   const session = await requireAdminSession();
   const isV2 = room.registrationContractVersion === 2;
   const roomId = isV2 ? room.roomId : room.id;
-  const roomTitle = isV2 ? "v2 등록 방" : room.title ?? "제목 없는 방";
+  const roomTitle = room.title ?? "제목 없는 방";
 
   return (
     <div className="grid gap-8">
@@ -49,7 +51,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
             목록으로
           </Link>
         }
-        description="등록 계약과 운영 상태를 확인·관리합니다."
+        description={isV2 ? room.subtitle ?? undefined : "등록 계약과 운영 상태를 확인·관리합니다."}
         eyebrow={<span className="admin-break-anywhere font-mono">{roomId}</span>}
         title={roomTitle}
       />
@@ -73,6 +75,10 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
         { label: "등록 계약 버전", value: "Legacy" },
       ]} />
       {isV2 ? <RegistrationRoomDetail room={room} /> : <LegacyRoomDetail room={room} />}
+      {isV2 ? <>
+        <RoomMetadataEditForm floor={room.data.location.floor} roomId={roomId} subtitle={room.subtitle} />
+        <RoomAddressEditForm location={room.data.location} roomId={roomId} />
+      </> : null}
       <RoomCoreEditForm
         depositKrw={isV2 ? room.data.pricing.depositKrw : room.depositKrw}
         description={isV2 ? room.data.descriptions.roomDescription : room.description}
@@ -84,6 +90,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
         canHide={session.adminRole === "super"}
         currentAddressHidden={isV2 ? undefined : room.isAddressDetailHidden}
         currentMemo={isV2 ? undefined : room.internalMemo}
+        canApprove={!isV2 || (room.data.location.addressVerifiedAt !== null && ["submitted", "inReview"].includes(room.roomStatus))}
         roomId={roomId}
       />
     </div>

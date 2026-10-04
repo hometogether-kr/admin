@@ -29,7 +29,9 @@ const REGISTRATION_VALUE_LABELS = {
   familyProxy: "가족 대리인",
   villa: "빌라",
   apartment: "아파트",
-  detachedHouse: "단독 주택",
+  officetel: "오피스텔",
+  shareHouse: "쉐어하우스",
+  detachedHouse: "단독주택",
   other: "기타",
   upTo10Pyeong: "10평 이하",
   teensPyeong: "10평대",
@@ -93,8 +95,8 @@ const REGISTRATION_VALUE_LABELS = {
 
 type RegistrationValue = keyof typeof REGISTRATION_VALUE_LABELS;
 
-export function registrationValueLabel(value: RegistrationValue): string {
-  return REGISTRATION_VALUE_LABELS[value];
+export function registrationValueLabel(value: RegistrationValue | null): string {
+  return value === null ? "—" : REGISTRATION_VALUE_LABELS[value];
 }
 
 export function registrationValueListLabel(

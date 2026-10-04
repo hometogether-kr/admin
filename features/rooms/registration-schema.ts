@@ -1,9 +1,11 @@
 import { z } from "zod";
 
 import { roomStatusSchema } from "@/features/rooms/list-schema";
+import { REGISTRATION_BUILDING_TYPES } from "@/features/rooms/constants";
 
 const registrantRelationshipSchema = z.enum(["owner", "familyProxy"]);
-const buildingTypeSchema = z.enum(["villa", "apartment", "detachedHouse", "other"]);
+export const editableBuildingTypeSchema = z.enum(REGISTRATION_BUILDING_TYPES);
+const buildingTypeSchema = z.enum(["villa", ...editableBuildingTypeSchema.options]);
 const areaRangeSchema = z.enum([
   "upTo10Pyeong", "teensPyeong", "twentiesPyeong", "thirtiesPyeong",
   "fortiesPyeong", "fiftiesPyeong", "overFiftyPyeong", "unknown",
@@ -11,7 +13,6 @@ const areaRangeSchema = z.enum([
 const residentTypeSchema = z.enum(["ownerOnly", "withFamily", "withOtherTenants"]);
 const residentGenderSchema = z.enum(["femaleOnly", "maleOnly", "mixed"]);
 const rentalSpaceTypeSchema = z.enum(["onePrivateRoom", "other"]);
-const privateRoomSizeSchema = z.enum(["small", "medium", "large", "unknown"]);
 const privateRoomOptionSchema = z.enum([
   "bed", "desk", "chair", "airConditioner", "wifi", "doorLock", "wardrobe", "none",
 ]);
@@ -31,21 +32,28 @@ const bathroomTypeSchema = z.enum([
 const registrantSchema = z.strictObject({ registrantRelationship: registrantRelationshipSchema });
 const locationSchema = z.strictObject({
   addressRoad: z.string().nullable(), addressDetail: z.string().nullable(),
+  addressJibun: z.string().nullable(),
+  legalDongCode: z.string().nullable(), legalDongName: z.string().nullable(),
+  sido: z.string().nullable(), sigungu: z.string().nullable(),
+  buildingDong: z.string().nullable(), unitNumber: z.string().nullable(),
+  floor: z.number().int().nullable(),
+  latitude: z.number().min(-90).max(90).nullable(),
+  longitude: z.number().min(-180).max(180).nullable(),
+  addressVerifiedAt: z.iso.datetime().nullable(), addressVerifiedBy: z.uuid().nullable(),
   addressRegion: z.string().nullable(),
   buildingType: buildingTypeSchema, buildingTypeOther: z.string().nullable(),
   approximateLocation: z.string().nullable(),
 });
 const householdSchema = z.strictObject({
   areaRange: areaRangeSchema, totalRoomCount: z.number().int().nonnegative(),
-  residentCount: z.number().int().nonnegative(), residentType: residentTypeSchema,
-  residentGenderComposition: residentGenderSchema, elevatorAvailable: z.boolean(),
+  residentCount: z.number().int().nonnegative(), residentType: residentTypeSchema.nullable(),
+  residentGenderComposition: residentGenderSchema.nullable(), elevatorAvailable: z.boolean(),
   parkingAvailable: z.boolean(),
   parkingType: z.enum(["freeAvailable", "freeFirstCome", "paid"]).nullable(),
   parkingDescription: z.string().nullable(),
 });
 const privateSpaceSchema = z.strictObject({
   rentalSpaceType: rentalSpaceTypeSchema, rentalSpaceTypeOther: z.string().nullable(),
-  privateRoomSize: privateRoomSizeSchema,
   privateRoomOptions: z.array(privateRoomOptionSchema).readonly(),
 });
 const commonFacilitiesSchema = z.strictObject({
@@ -87,6 +95,7 @@ export const roomMediaSchema = z.strictObject({
 });
 
 export const registrationRoomSchema = z.strictObject({
+  title: z.string().nullable(), subtitle: z.string().nullable(),
   registrationContractVersion: z.literal(2), roomId: z.uuid(), roomStatus: roomStatusSchema,
   isPublic: z.boolean(), submittedAt: z.iso.datetime(),
   data: z.strictObject({
@@ -99,4 +108,5 @@ export const registrationRoomSchema = z.strictObject({
 }).readonly();
 
 export type RegistrationRoom = z.infer<typeof registrationRoomSchema>;
+export type RegistrationLocation = RegistrationRoom["data"]["location"];
 export type RoomMedia = z.infer<typeof roomMediaSchema>;

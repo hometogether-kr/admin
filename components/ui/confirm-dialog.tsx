@@ -11,6 +11,7 @@ import { IconButton } from "@/components/ui/icon-button";
 type ConfirmDialogProps = {
   readonly children?: ReactNode;
   readonly confirmDisabled?: boolean;
+  readonly disabled?: boolean;
   readonly confirmLabel: string;
   readonly description: string;
   readonly id: string;
@@ -24,6 +25,7 @@ type ConfirmDialogProps = {
 export function ConfirmDialog({
   children,
   confirmDisabled = false,
+  disabled,
   confirmLabel,
   description,
   id,
@@ -83,6 +85,7 @@ export function ConfirmDialog({
   return (
     <>
       <Button
+        disabled={disabled}
         onClick={openDialog}
         ref={triggerRef}
         variant={triggerVariant}
