@@ -21,8 +21,8 @@ import { ConfirmedAction } from "@/features/rooms/components/confirmed-action";
 type RoomActionPanelProps = {
   readonly canHide: boolean;
   readonly canApprove: boolean;
-  readonly currentAddressHidden?: boolean;
-  readonly currentMemo?: string | null;
+  readonly currentAddressHidden: boolean;
+  readonly currentMemo: string | null;
   readonly roomId: string;
 };
 
@@ -132,6 +132,7 @@ export function RoomActionPanel({
         </ConfirmedAction>
         <ConfirmedAction
           action={setRoomAddressVisibility.bind(null, roomId)}
+          key={`address-visibility-${currentAddressHidden}`}
           confirmLabel="설정 저장"
           description="상세 주소 노출 여부를 명시적으로 변경합니다."
           id={`${idPrefix}-address`}
@@ -140,8 +141,8 @@ export function RoomActionPanel({
           triggerLabel="주소 공개 설정"
         >
           <Select
-            defaultValue={currentAddressHidden === false ? "false" : "true"}
-            hint={currentAddressHidden === undefined ? "현재 값은 v2 상세 응답에 포함되지 않습니다." : undefined}
+            defaultValue={String(currentAddressHidden)}
+            hint="관리자는 숨김 설정과 관계없이 상세주소를 볼 수 있습니다."
             id={`${idPrefix}-address-hidden`}
             label="상세 주소"
             name="hidden"
@@ -153,6 +154,7 @@ export function RoomActionPanel({
         </ConfirmedAction>
         <ConfirmedAction
           action={updateRoomMemo.bind(null, roomId)}
+          key={`internal-memo-${currentMemo}`}
           confirmLabel="메모 저장"
           description="빈 값으로 저장하면 내부 메모를 제거합니다."
           id={`${idPrefix}-memo`}
@@ -162,7 +164,7 @@ export function RoomActionPanel({
         >
           <Textarea
             defaultValue={currentMemo ?? ""}
-            hint={currentMemo === undefined ? "현재 값은 v2 상세 응답에 포함되지 않습니다." : "관리자에게만 표시됩니다."}
+            hint="관리자에게만 표시됩니다."
             id={`${idPrefix}-memo-value`}
             label="내부 메모"
             maxLength={2_000}

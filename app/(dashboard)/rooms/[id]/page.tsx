@@ -88,8 +88,8 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
       />
       <RoomActionPanel
         canHide={session.adminRole === "super"}
-        currentAddressHidden={isV2 ? undefined : room.isAddressDetailHidden}
-        currentMemo={isV2 ? undefined : room.internalMemo}
+        currentAddressHidden={room.isAddressDetailHidden}
+        currentMemo={room.internalMemo}
         canApprove={!isV2 || (room.data.location.addressVerifiedAt !== null && ["submitted", "inReview"].includes(room.roomStatus))}
         roomId={roomId}
       />

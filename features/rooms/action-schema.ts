@@ -14,8 +14,8 @@ export const notificationTemplateSchema = z.enum(ROOM_NOTIFICATION_TEMPLATES);
 export const addressHiddenSchema = z.enum(["true", "false"])
   .transform((value) => value === "true");
 export const memoSchema = z.preprocess(
-  (value) => typeof value === "string" && value.trim() === "" ? null : value,
-  z.string().trim().max(2_000).nullable(),
+  (value) => typeof value === "string" ? value : undefined,
+  z.string().trim().max(2_000).transform((value) => value === "" ? null : value),
 );
 
 const currencyStringSchema = (minimum: number, maximum: number) => z.string()

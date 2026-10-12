@@ -98,6 +98,7 @@ export const registrationRoomSchema = z.strictObject({
   title: z.string().nullable(), subtitle: z.string().nullable(),
   registrationContractVersion: z.literal(2), roomId: z.uuid(), roomStatus: roomStatusSchema,
   isPublic: z.boolean(), submittedAt: z.iso.datetime(),
+  isAddressDetailHidden: z.boolean(), internalMemo: z.string().nullable(),
   data: z.strictObject({
     registrant: registrantSchema, location: locationSchema, household: householdSchema,
     privateSpace: privateSpaceSchema, commonFacilities: commonFacilitiesSchema,
