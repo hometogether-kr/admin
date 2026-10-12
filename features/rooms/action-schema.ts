@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { RoomDetail } from "./detail-schema";
 
 import { REGISTRATION_BUILDING_TYPES, ROOM_NOTIFICATION_TEMPLATES } from "@/features/rooms/constants";
 import type { RegistrationLocation } from "@/features/rooms/registration-schema";
@@ -113,4 +114,37 @@ export function canVerifyRoomAddress(location: RegistrationLocation): boolean {
     && editableBuildingTypeSchema.safeParse(location.buildingType).success
     && address?.includes(location.sido) && address.includes(location.sigungu),
   );
+}
+
+export function getRoomPublicationState(room: RoomDetail) {
+  const isV2 = room.registrationContractVersion === 2;
+  const eligible = ["submitted", "inReview", "hidden"].includes(room.roomStatus);
+  const verified = isV2 && room.title !== null
+    && room.data.location.addressVerifiedAt !== null
+    && room.data.location.addressVerifiedBy !== null
+    && canVerifyRoomAddress(room.data.location);
+  const canPublish = isV2 && eligible && verified && !room.isPublic;
+  const canHide = isV2 ? room.roomStatus === "published" && room.isPublic : true;
+  const needsAddressVerification = isV2 && eligible && !verified;
+  const publishLabel = room.roomStatus === "hidden" ? "재게시" : "승인·게시";
+  let notice: string;
+  if (!isV2) {
+    notice = "이전 등록 형식의 매물은 현재 승인·재게시 API에서 지원하지 않습니다.";
+  } else if (room.roomStatus === "published" && room.isPublic) {
+    notice = "공개 중입니다. 주소·건물 유형을 변경해 저장하면 공개가 중단되며, 주소 재확인 후 다시 게시해야 합니다.";
+  } else if (room.roomStatus === "hidden") {
+    notice = verified
+      ? "숨김 상태입니다. 주소 확인이 완료되어 재게시할 수 있습니다."
+      : "숨김 상태입니다. 주소 정보를 보완하고 주소 확인을 완료한 뒤 재게시해 주세요.";
+  } else if (room.roomStatus === "inReview") {
+    notice = verified
+      ? "현재 비공개·재검토 상태입니다. 주소 확인이 완료되어 승인·게시할 수 있습니다."
+      : "현재 비공개·재검토 상태입니다. 주소 정보를 보완하고 재확인한 뒤 승인·게시해 주세요.";
+  } else if (room.roomStatus === "submitted") {
+    notice = verified ? "주소 확인이 완료되었습니다. 승인·게시하면 공개됩니다."
+      : "현재 비공개입니다. 저장된 주소를 확인한 뒤 승인·게시해 주세요.";
+  } else {
+    notice = "현재 매물 상태에서는 게시할 수 없습니다.";
+  }
+  return { canPublish, canHide, needsAddressVerification, publishLabel, notice };
 }
