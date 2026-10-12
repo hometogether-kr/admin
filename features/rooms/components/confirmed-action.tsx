@@ -17,6 +17,7 @@ import { ActionFeedback } from "@/components/admin/action-feedback";
 import { Button, type ButtonVariant } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { RoomMutationCompletion } from "@/features/rooms/mutation-receipt";
+import { useRoomMutationAction } from "@/features/rooms/components/room-mutation-provider";
 import {
   INITIAL_ADMIN_ACTION_RESULT,
   type AdminActionResult,
@@ -65,8 +66,9 @@ export function ConfirmedAction({
   const scrollOwnerRef = useRef<HTMLElement>(null);
   const previousScrollOwnerOverflowYRef = useRef("");
   const [fieldError, setFieldError] = useState<string>();
+  const mutation = useRoomMutationAction(action);
   const [result, submit, pending] = useActionState(
-    action,
+    mutation.action,
     INITIAL_ADMIN_ACTION_RESULT,
   );
 
@@ -90,6 +92,7 @@ export function ConfirmedAction({
   }
 
   function handleConfirm() {
+    if (disabled || pending || mutation.busy) return;
     if (trimmedRequiredField !== undefined) {
       const field = formRef.current?.elements.namedItem(trimmedRequiredField.name);
       if (!(field instanceof HTMLTextAreaElement) || field.value.trim() === "") {
@@ -104,6 +107,7 @@ export function ConfirmedAction({
   }
 
   function openDialog() {
+    if (disabled || pending || mutation.busy) return;
     setFieldError(undefined);
     const dialog = dialogRef.current;
     if (dialog === null) return;
@@ -130,7 +134,7 @@ export function ConfirmedAction({
   return (
     <form action={submit} className="grid gap-2" ref={formRef}>
       <RoomMutationCompletion result={result} roomId={roomId} />
-      <Button disabled={disabled || pending} onClick={openDialog} ref={triggerRef} variant={triggerVariant}>
+      <Button disabled={disabled || pending || mutation.busy} onClick={openDialog} ref={triggerRef} variant={triggerVariant}>
         {triggerLabel}
       </Button>
       <dialog
@@ -161,7 +165,7 @@ export function ConfirmedAction({
               취소
             </Button>
             <Button
-              disabled={pending}
+              disabled={disabled || pending || mutation.busy}
               onClick={handleConfirm}
               variant={tone === "destructive" ? "destructive" : "primary"}
             >

@@ -8,6 +8,7 @@ import { DefinitionList } from "@/components/ui/definition-list";
 import { AdminApiError } from "@/lib/api/errors";
 import { requireAdminSession } from "@/lib/auth/session";
 import { getRoomPublicationState, roomIdSchema } from "@/features/rooms/action-schema";
+import { RoomMutationProvider } from "@/features/rooms/components/room-mutation-provider";
 import { LegacyRoomDetail } from "@/features/rooms/components/legacy-room-detail";
 import { RegistrationRoomDetail } from "@/features/rooms/components/registration-room-detail";
 import { RoomCoreEditForm } from "@/features/rooms/components/room-core-edit-form";
@@ -43,7 +44,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
   const publication = getRoomPublicationState(room);
 
   return (
-    <div className="grid gap-8">
+    <RoomMutationProvider key={roomId}><div className="grid gap-8">
       <PageHeader
         actions={
           <Link
@@ -97,6 +98,6 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
         publishLabel={publication.publishLabel}
         roomId={roomId}
       />
-    </div>
+    </div></RoomMutationProvider>
   );
 }

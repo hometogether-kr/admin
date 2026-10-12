@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { updateRoomCore } from "@/features/rooms/actions";
 import { RoomMutationCompletion } from "@/features/rooms/mutation-receipt";
 import { INITIAL_ADMIN_ACTION_RESULT } from "@/lib/actions/result";
+import { useRoomMutationAction } from "@/features/rooms/components/room-mutation-provider";
 
 type RoomCoreEditFormProps = {
   readonly depositKrw: number | null;
@@ -25,8 +26,9 @@ export function RoomCoreEditForm({
   monthlyRentKrw,
   roomId,
 }: RoomCoreEditFormProps) {
+  const mutation = useRoomMutationAction(updateRoomCore.bind(null, roomId));
   const [result, submit, pending] = useActionState(
-    updateRoomCore.bind(null, roomId),
+    mutation.action,
     INITIAL_ADMIN_ACTION_RESULT,
   );
 
@@ -42,16 +44,18 @@ export function RoomCoreEditForm({
       </div>
       <form action={submit} className="grid gap-4 rounded-panel border border-line-subtle bg-surface p-4 sm:grid-cols-3">
         <RoomMutationCompletion result={result} roomId={roomId} />
-        <Input defaultValue={monthlyRentKrw ?? ""} id="room-monthly-rent" label="월세(원)" max={100_000_000} min={1} name="monthlyRentKrw" required step={1} type="number" />
-        <Input defaultValue={depositKrw ?? ""} id="room-deposit" label="보증금(원)" max={1_000_000_000} min={0} name="depositKrw" required step={1} type="number" />
-        <Input defaultValue={maintenanceFeeKrw ?? ""} id="room-maintenance-fee" label="관리비(원)" max={1_000_000_000} min={0} name="maintenanceFeeKrw" required step={1} type="number" />
-        <Textarea className="sm:col-span-3" defaultValue={description ?? ""} id="room-description" label="매물 설명" maxLength={2_000} name="description" />
-        <div className="grid gap-3 sm:col-span-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-          <ActionFeedback result={result} />
-          <Button loading={pending} type="submit" variant="primary">
-            핵심 정보 저장
-          </Button>
-        </div>
+        <fieldset className="contents" disabled={pending || mutation.busy}>
+          <Input defaultValue={monthlyRentKrw ?? ""} id="room-monthly-rent" label="월세(원)" max={100_000_000} min={1} name="monthlyRentKrw" required step={1} type="number" />
+          <Input defaultValue={depositKrw ?? ""} id="room-deposit" label="보증금(원)" max={1_000_000_000} min={0} name="depositKrw" required step={1} type="number" />
+          <Input defaultValue={maintenanceFeeKrw ?? ""} id="room-maintenance-fee" label="관리비(원)" max={1_000_000_000} min={0} name="maintenanceFeeKrw" required step={1} type="number" />
+          <Textarea className="sm:col-span-3" defaultValue={description ?? ""} id="room-description" label="매물 설명" maxLength={2_000} name="description" />
+          <div className="grid gap-3 sm:col-span-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+            <ActionFeedback result={result} />
+            <Button loading={pending} type="submit" variant="primary">
+              핵심 정보 저장
+            </Button>
+          </div>
+        </fieldset>
       </form>
     </section>
   );

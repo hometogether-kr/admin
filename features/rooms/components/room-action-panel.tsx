@@ -18,6 +18,7 @@ import {
   ROOM_NOTIFICATION_TEMPLATES,
 } from "@/features/rooms/constants";
 import { ConfirmedAction } from "@/features/rooms/components/confirmed-action";
+import { useRoomMutationState } from "@/features/rooms/components/room-mutation-provider";
 
 type RoomActionPanelProps = {
   readonly canHide: boolean;
@@ -42,6 +43,7 @@ export function RoomActionPanel({
   roomId,
 }: RoomActionPanelProps) {
   const idPrefix = `room-${roomId}`;
+  const { addressDirty } = useRoomMutationState();
   return (
     <section aria-labelledby="room-actions-heading" className="grid gap-4">
       <div className="grid gap-1">
@@ -53,10 +55,11 @@ export function RoomActionPanel({
           <span className="whitespace-nowrap">즉시 반영됩니다.</span>
         </p>
       </div>
+      {addressDirty ? <p className="text-body text-ink-subtle">저장되지 않은 주소 변경이 있습니다. 주소를 먼저 저장하고 확인한 뒤 게시해 주세요.</p> : null}
       <div className="grid items-start gap-3 sm:grid-cols-2 xl:grid-cols-3">
         <ConfirmedAction
           action={(publishLabel === "재게시" ? republishRoom : approveRoom).bind(null, roomId)}
-          disabled={!canApprove}
+          disabled={!canApprove || addressDirty}
           confirmLabel={publishLabel}
           description={publishLabel === "재게시" ? "주소 확인을 마친 숨김 매물을 사용자 화면에 다시 게시합니다." : "주소 확인을 마친 매물을 승인하고 사용자 화면에 게시합니다."}
           id={`${idPrefix}-approve`}
