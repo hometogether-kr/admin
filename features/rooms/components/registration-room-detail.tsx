@@ -17,6 +17,10 @@ export function RegistrationRoomDetail({ room }: RegistrationRoomDetailProps) {
   const { data } = room;
   return (
     <div className="grid gap-8">
+      <DetailSection id="operations-heading" items={[
+        { label: "상세 주소 숨김", value: booleanLabel(room.isAddressDetailHidden) },
+        { label: "내부 메모", value: displayValue(room.internalMemo) },
+      ]} title="관리자 운영 정보" />
       <DetailSection id="registrant-heading" items={[
         { label: "등록자 관계", value: registrationValueLabel(data.registrant.registrantRelationship) },
       ]} title="등록자" />

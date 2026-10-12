@@ -10,6 +10,8 @@ export function propertyRoomFixture() {
     subtitle: "채광 좋은 조용한 집",
     roomStatus: "submitted",
     isPublic: false,
+    isAddressDetailHidden: false,
+    internalMemo: null,
     submittedAt: "2026-10-04T00:00:00.000Z",
     data: {
       registrant: { registrantRelationship: "owner" },
