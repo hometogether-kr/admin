@@ -10,6 +10,7 @@ const RECEIPT_STATE_KEY = "__hometogetherRoomMutationReceipt";
 const ROOM_DELETION_MESSAGE = "방을 삭제했습니다.";
 const ROOM_MUTATION_MESSAGES = new Set([
   "방을 승인·게시했습니다.",
+  "방을 재게시했습니다.",
   "방 핵심 정보를 수정했습니다.",
   "소제목·층수를 저장했습니다.",
   "주소를 저장했습니다. 주소 확인이 필요합니다.",

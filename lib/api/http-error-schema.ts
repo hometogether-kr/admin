@@ -7,6 +7,7 @@ export const adminHttpErrorSchema = z
     statusCode: z.number().int().min(400).max(599),
     message: z.union([z.string().min(1), z.array(z.string().min(1)).min(1).readonly()]),
     error: z.string().min(1).optional(),
+    code: z.string().min(1).max(100).optional(),
     path: z.string().startsWith("/").min(1),
     timestamp: z.iso.datetime(),
   })

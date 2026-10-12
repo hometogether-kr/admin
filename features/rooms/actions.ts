@@ -136,6 +136,16 @@ export async function updateRoomCore(
   });
 }
 
+export async function republishRoom(
+  roomId: string, _previous: AdminActionResult, _formData: FormData,
+): Promise<AdminActionResult> {
+  void _previous;
+  void _formData;
+  return runAdminMutationAction("ROM-03", ({ mutate }) =>
+    mutateRoom({ roomId, successMessage: "방을 재게시했습니다." }, mutate),
+  );
+}
+
 export async function rejectRoom(
   roomId: string, _previous: AdminActionResult, formData: FormData,
 ): Promise<AdminActionResult> {

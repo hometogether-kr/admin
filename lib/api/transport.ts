@@ -3,8 +3,7 @@ import "server-only";
 import ky, { TimeoutError, type Options } from "ky";
 import { z } from "zod";
 
-import { AdminApiError } from "@/lib/api/errors";
-import { adminHttpErrorSchema } from "@/lib/api/http-error-schema";
+import { AdminApiError, adminApiStatusError } from "@/lib/api/errors";
 import type { AdminOperationId } from "@/lib/api/operations";
 import {
   buildAdminOperationPath,
@@ -85,30 +84,6 @@ async function responseFor(request: AdminTransportRequest): Promise<Response> {
   }
 }
 
-async function statusError(
-  response: Response,
-  request: AdminTransportRequest,
-): Promise<AdminApiError> {
-  // Validate error structure for diagnostics without reflecting its contents to clients.
-  let cause: Error | undefined;
-  try {
-    const payload: unknown = await response.json();
-    const parsed = adminHttpErrorSchema.safeParse(payload);
-    if (!parsed.success) cause = parsed.error;
-  } catch (parseCause) {
-    if (parseCause instanceof Error) cause = parseCause;
-    else throw parseCause;
-  }
-  return new AdminApiError({
-    kind: response.status >= 400 && response.status <= 599
-      ? "http"
-      : "unexpectedStatus",
-    operationId: request.operationId,
-    status: response.status,
-    cause,
-  });
-}
-
 export async function executeAdminJson<Schema extends z.ZodType>(
   input: {
     readonly request: AdminTransportRequest;
@@ -124,7 +99,7 @@ export async function executeAdminJson<Schema extends z.ZodType>(
   }
   const response = await responseFor(input.request);
   if (response.status !== operation.successStatus) {
-    throw await statusError(response, input.request);
+    throw await adminApiStatusError(response, input.request.operationId);
   }
   let payload: unknown;
   try {
@@ -164,6 +139,6 @@ export async function executeAdminNoContent(
   }
   const response = await responseFor(request);
   if (response.status !== operation.successStatus) {
-    throw await statusError(response, request);
+    throw await adminApiStatusError(response, request.operationId);
   }
 }

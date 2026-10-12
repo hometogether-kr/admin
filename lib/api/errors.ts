@@ -2,6 +2,7 @@ import "server-only";
 
 import { adminActionFailure, type AdminActionError } from "@/lib/actions/result";
 import type { AdminOperationId } from "@/lib/api/operations";
+import { adminHttpErrorSchema } from "@/lib/api/http-error-schema";
 
 export const ADMIN_API_ERROR_KINDS = [
   "request",
@@ -21,6 +22,7 @@ type AdminApiErrorInput = {
   readonly kind: AdminApiErrorKind;
   readonly operationId: AdminOperationId;
   readonly status?: number;
+  readonly code?: string;
   readonly cause?: Error;
 };
 
@@ -41,12 +43,14 @@ export class AdminApiError extends Error {
   readonly kind: AdminApiErrorKind;
   readonly operationId: AdminOperationId;
   readonly status: number | undefined;
+  readonly code: string | undefined;
 
   constructor(input: AdminApiErrorInput) {
     super(INTERNAL_MESSAGES[input.kind], { cause: input.cause });
     this.kind = input.kind;
     this.operationId = input.operationId;
     this.status = input.status;
+    this.code = input.code;
   }
 }
 
@@ -59,9 +63,44 @@ const STATUS_ACTION_MESSAGES = {
   422: "입력값을 확인해 주세요.",
 } as const;
 
+export async function adminApiStatusError(response: Response, operationId: AdminOperationId): Promise<AdminApiError> {
+  let cause: Error | undefined;
+  let code: string | undefined;
+  try {
+    const payload: unknown = await response.json();
+    const parsed = adminHttpErrorSchema.safeParse(payload);
+    if (!parsed.success) cause = parsed.error;
+    else if (parsed.data.statusCode === response.status) code = parsed.data.code;
+  } catch (parseCause) {
+    if (parseCause instanceof Error) cause = parseCause;
+    else throw parseCause;
+  }
+  return new AdminApiError({
+    kind: response.status >= 400 && response.status <= 599 ? "http" : "unexpectedStatus",
+    operationId, status: response.status, code, cause,
+  });
+}
+
 export function adminApiFailureResult(error: AdminApiError): AdminActionError {
   // Upstream bodies and internal causes stay server-side; clients receive stable Korean copy.
   if (error.kind === "http" || error.kind === "refresh") {
+    if (error.kind === "http" && (error.status === 400 || error.status === 409)
+      && error.operationId.startsWith("ROM-")) {
+      switch (error.code) {
+        case "ROOM_ADDRESS_VERIFICATION_REQUIRED":
+          return adminActionFailure("주소 확인을 완료한 뒤 게시해 주세요.");
+        case "ROOM_PUBLICATION_NOT_ALLOWED":
+          return adminActionFailure("현재 매물 상태에서는 게시할 수 없습니다. 최신 상태를 확인해 주세요.");
+        case "ROOM_HIDE_NOT_ALLOWED":
+          return adminActionFailure("공개 중인 게시 매물만 숨길 수 있습니다. 최신 상태를 확인해 주세요.");
+        case "ROOM_ADMIN_EDIT_NOT_ALLOWED":
+          return adminActionFailure("제출된 등록 계약 v2 매물만 주소·메타데이터를 수정할 수 있습니다.");
+        case "ROOM_ADDRESS_INCOMPLETE":
+          return adminActionFailure("주소 확인에 필요한 주소·시도·시군구·법정동·코드와 건물 유형을 보완해 주세요.");
+        case "ROOM_ADDRESS_REGION_MISMATCH":
+          return adminActionFailure("도로명 또는 지번 주소와 시도·시군구가 일치하도록 보정해 주세요.");
+      }
+    }
     switch (error.status) {
       case 400:
         return adminActionFailure(STATUS_ACTION_MESSAGES[400]);

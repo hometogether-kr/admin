@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { DefinitionList } from "@/components/ui/definition-list";
 import { AdminApiError } from "@/lib/api/errors";
 import { requireAdminSession } from "@/lib/auth/session";
-import { roomIdSchema } from "@/features/rooms/action-schema";
+import { getRoomPublicationState, roomIdSchema } from "@/features/rooms/action-schema";
+import { RoomMutationProvider } from "@/features/rooms/components/room-mutation-provider";
 import { LegacyRoomDetail } from "@/features/rooms/components/legacy-room-detail";
 import { RegistrationRoomDetail } from "@/features/rooms/components/registration-room-detail";
 import { RoomCoreEditForm } from "@/features/rooms/components/room-core-edit-form";
@@ -39,9 +41,10 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
   const isV2 = room.registrationContractVersion === 2;
   const roomId = isV2 ? room.roomId : room.id;
   const roomTitle = room.title ?? "제목 없는 방";
+  const publication = getRoomPublicationState(room);
 
   return (
-    <div className="grid gap-8">
+    <RoomMutationProvider key={roomId}><div className="grid gap-8">
       <PageHeader
         actions={
           <Link
@@ -61,6 +64,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
         <Badge variant={room.isPublic ? "success" : "neutral"}>{room.isPublic ? "공개" : "비공개"}</Badge>
         <Badge variant="info">{isV2 ? "등록 계약 v2" : "Legacy"}</Badge>
       </div>
+      <Alert variant={publication.needsAddressVerification ? "warning" : "info"}>{publication.notice}</Alert>
       <DefinitionList items={isV2 ? [
         { label: "방 ID", value: room.roomId },
         { label: "상태", value: ROOM_STATUS_LABELS[room.roomStatus] },
@@ -87,12 +91,13 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
         roomId={roomId}
       />
       <RoomActionPanel
-        canHide={session.adminRole === "super"}
+        canHide={session.adminRole === "super" && publication.canHide}
         currentAddressHidden={room.isAddressDetailHidden}
         currentMemo={room.internalMemo}
-        canApprove={!isV2 || (room.data.location.addressVerifiedAt !== null && ["submitted", "inReview"].includes(room.roomStatus))}
+        canApprove={publication.canPublish}
+        publishLabel={publication.publishLabel}
         roomId={roomId}
       />
-    </div>
+    </div></RoomMutationProvider>
   );
 }
