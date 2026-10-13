@@ -60,6 +60,8 @@ localhost/loopback HTTP를 허용합니다.
 
 주소/게시 오류 응답의 `code`를 검증해 `ROOM_ADDRESS_VERIFICATION_REQUIRED`, `ROOM_PUBLICATION_NOT_ALLOWED`, `ROOM_HIDE_NOT_ALLOWED`, `ROOM_ADMIN_EDIT_NOT_ALLOWED`, `ROOM_ADDRESS_INCOMPLETE`, `ROOM_ADDRESS_REGION_MISMATCH`별 한국어 안내를 제공합니다. 알 수 없는 코드·구조가 잘못된 오류 응답은 기존 상태 코드 안내를 사용하고 원문 진단 정보는 화면에 노출하지 않습니다. 인증·권한 오류 안내도 유지합니다.
 
+매물 삭제(`DELETE /admin/rooms/:id`)의 `ROOM_ACTIVE_RESERVATIONS_EXIST`는 활성 예약으로 삭제할 수 없다는 안내와 예약 현황 확인을, `ROOM_DELETION_NOT_ALLOWED`는 작성 중 매물을 관리자에서 삭제할 수 없다는 안내와 매물 상태 확인을 제공합니다. 활성 예약 매물 삭제 허용 및 입주자 연락 이행 확인 기능은 이번 범위에 포함하지 않습니다. 배포 후 테스트용 매물의 삭제 차단 시 해당 안내가 표시되는지 확인합니다.
+
 배포 후 테스트용 매물로 주소 보정→저장값 재조회→주소 확인→승인·게시→주소/건물 유형 변경 후 공개 중단→재확인·게시→숨김·재게시 순서를 확인합니다. 실제로 일치하는 주소·법정동 데이터를 사용하고 저장과 확인이 분리되는지, 처리 중 다른 버튼이 비활성화되는지 확인합니다. 사진·매물 제거 버튼과 호스트 수정·재제출은 별도 점검 범위입니다.
 
 저장 성공 후 상세를 다시 조회하여 서버 생성 제목·층수·확인 상태를 표시합니다. 신규 세 API는 기존 핵심 정보 수정 응답(`id`)과 다른 `roomId`, `title`, `subtitle`, `floor`, `addressVerifiedAt` 응답을 검증합니다. Legacy 상세 및 가격·설명 수정 기능은 유지합니다. Client 화면·지도 연동은 이 작업 범위에 포함하지 않습니다.
