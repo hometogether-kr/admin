@@ -15,7 +15,6 @@ import {
   memoSchema,
   notificationTemplateSchema,
   reasonSchema,
-  revisionMessageSchema,
   roomCoreUpdateFormSchema,
   roomIdSchema,
   roomMetadataFormSchema,
@@ -166,18 +165,10 @@ export async function rejectRoom(
 export async function requestRoomRevision(
   roomId: string, _previous: AdminActionResult, formData: FormData,
 ): Promise<AdminActionResult> {
-  return runAdminMutationAction("ROM-05", ({ mutate }) => {
-    const message = revisionMessageSchema.safeParse(formData.get("message"));
-    if (!message.success) return adminActionFailure("수정 요청 내용을 입력해 주세요.");
-    return mutateRoom(
-      {
-        roomId,
-        body: { message: message.data },
-        successMessage: "수정을 요청했습니다.",
-      },
-      mutate,
-    );
-  });
+  void roomId;
+  void _previous;
+  void formData;
+  return adminActionFailure("호스트의 제출 후 수정·재제출 기능은 준비 중입니다.");
 }
 
 export async function hideRoom(
@@ -203,7 +194,7 @@ export async function resendRoomNotification(
         roomId,
         body: { templateCode: template.data },
         noContent: true,
-        successMessage: "알림을 다시 보냈습니다.",
+        successMessage: "알림 재전송을 요청했습니다. 전달 결과는 알림 로그에서 확인해 주세요.",
       },
       mutate,
     );

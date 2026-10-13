@@ -49,11 +49,9 @@ export const ROOM_STATUS_BADGE = {
 export const ROOM_NOTIFICATION_TEMPLATES = [
   "roomApproved",
   "roomRejected",
-  "roomRevisionRequested",
 ] as const;
 
 export const ROOM_NOTIFICATION_LABELS = {
   roomApproved: "방 승인 알림",
   roomRejected: "방 반려 알림",
-  roomRevisionRequested: "방 수정 요청 알림",
 } as const satisfies Record<(typeof ROOM_NOTIFICATION_TEMPLATES)[number], string>;

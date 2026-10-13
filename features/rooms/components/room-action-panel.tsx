@@ -1,6 +1,7 @@
 "use client";
 
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
   approveRoom,
@@ -8,7 +9,6 @@ import {
   deleteRoom,
   hideRoom,
   rejectRoom,
-  requestRoomRevision,
   resendRoomNotification,
   setRoomAddressVisibility,
   updateRoomMemo,
@@ -88,24 +88,10 @@ export function RoomActionPanel({
             placeholder="구체적인 반려 사유"
           />
         </ConfirmedAction>
-        <ConfirmedAction
-          action={requestRoomRevision.bind(null, roomId)}
-          confirmLabel="수정 요청"
-          description="호스트가 보완해야 할 내용을 입력하세요."
-          id={`${idPrefix}-revision`}
-          roomId={roomId}
-          title="수정을 요청할까요?"
-          trimmedRequiredField={{ name: "message", message: "수정 요청 내용을 입력해 주세요." }}
-          triggerLabel="수정 요청"
-        >
-          <Textarea
-            id={`${idPrefix}-revision-message`}
-            label="수정 요청 내용"
-            maxLength={2_000}
-            name="message"
-            placeholder="확인 및 보완이 필요한 내용"
-          />
-        </ConfirmedAction>
+        <div className="grid gap-2">
+          <Button disabled type="button">수정 요청 (준비 중)</Button>
+          <p className="text-compact text-ink-subtle">호스트의 제출 후 수정·재제출 기능은 추후 제공됩니다.</p>
+        </div>
         {canHide ? (
           <ConfirmedAction
             action={hideRoom.bind(null, roomId)}
@@ -122,7 +108,7 @@ export function RoomActionPanel({
         <ConfirmedAction
           action={resendRoomNotification.bind(null, roomId)}
           confirmLabel="재전송"
-          description="선택한 운영 알림을 호스트에게 다시 보냅니다."
+          description="선택한 운영 알림의 재전송을 요청합니다. 실제 전달 결과는 알림 로그에서 확인해 주세요."
           id={`${idPrefix}-notification`}
           roomId={roomId}
           title="알림을 다시 보낼까요?"
@@ -180,7 +166,7 @@ export function RoomActionPanel({
         <ConfirmedAction
           action={deleteRoom.bind(null, roomId)}
           confirmLabel="방 삭제"
-          description="방을 소프트 삭제합니다. 취소하면 삭제하지 않습니다."
+          description="방을 삭제하고 목록에서 제외합니다. 활성 예약이 있으면 삭제할 수 없습니다. 취소하면 삭제하지 않습니다."
           id={`${idPrefix}-delete`}
           roomId={roomId}
           title="방을 삭제할까요?"
