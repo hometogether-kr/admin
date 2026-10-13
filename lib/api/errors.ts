@@ -103,6 +103,8 @@ export function adminApiFailureResult(error: AdminApiError): AdminActionError {
           return adminActionFailure("활성 예약이 있어 삭제할 수 없습니다. 예약 현황을 확인해 주세요.");
         case "ROOM_DELETION_NOT_ALLOWED":
           return adminActionFailure("작성 중인 매물은 관리자에서 삭제할 수 없습니다. 매물 상태를 확인해 주세요.");
+        case "ROOM_LAST_PHOTO_REQUIRED":
+          return adminActionFailure("매물 사진은 최소 한 장을 유지해야 합니다. 마지막 사진은 삭제할 수 없습니다.");
       }
     }
     switch (error.status) {
