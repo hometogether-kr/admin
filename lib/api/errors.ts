@@ -99,6 +99,10 @@ export function adminApiFailureResult(error: AdminApiError): AdminActionError {
           return adminActionFailure("주소 확인에 필요한 주소·시도·시군구·법정동·코드와 건물 유형을 보완해 주세요.");
         case "ROOM_ADDRESS_REGION_MISMATCH":
           return adminActionFailure("도로명 또는 지번 주소와 시도·시군구가 일치하도록 보정해 주세요.");
+        case "ROOM_ACTIVE_RESERVATIONS_EXIST":
+          return adminActionFailure("활성 예약이 있어 삭제할 수 없습니다. 예약 현황을 확인해 주세요.");
+        case "ROOM_DELETION_NOT_ALLOWED":
+          return adminActionFailure("작성 중인 매물은 관리자에서 삭제할 수 없습니다. 매물 상태를 확인해 주세요.");
       }
     }
     switch (error.status) {
