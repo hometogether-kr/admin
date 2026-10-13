@@ -17,7 +17,7 @@ export function MediaSection({ media, roomId }: MediaSectionProps) {
           미디어
         </h2>
         <p className="admin-keep-words text-body text-ink-subtle">
-          서명 URL은 숨깁니다. 삭제 전 대상을 확인해 주세요.
+          삭제 후 사진 목록과 대표 표시를 갱신합니다. 마지막 사진은 삭제할 수 없습니다.
         </p>
       </div>
       {media.length === 0 ? (
@@ -45,7 +45,7 @@ export function MediaSection({ media, roomId }: MediaSectionProps) {
                 { label: "URL 만료", value: formatDate(item.readUrlExpiresAt) },
               ]} />
               <div className="justify-self-start">
-                <MediaDeleteAction filename={item.originalFilename} mediaId={item.id} roomId={roomId} />
+                <MediaDeleteAction filename={item.originalFilename} mediaId={item.id} roomId={roomId} isLastPhoto={media.length === 1} isRepresentative={item.isRepresentative} />
               </div>
             </article>
           ))}
