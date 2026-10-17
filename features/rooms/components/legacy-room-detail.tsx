@@ -4,6 +4,7 @@ import {
   displayValue,
   formatDate,
   formatKrw,
+  formatMonthlyRentManwon,
   listLabel,
 } from "@/features/rooms/format";
 import type { LegacyRoom } from "@/features/rooms/legacy-schema";
@@ -38,7 +39,7 @@ export function LegacyRoomDetail({ room }: LegacyRoomDetailProps) {
       ]} title="입주 조건" />
       <DetailSection id="legacy-pricing-heading" items={[
         { label: "보증금", value: formatKrw(room.depositKrw) },
-        { label: "월세", value: formatKrw(room.monthlyRentKrw) },
+        { label: "월세", value: formatMonthlyRentManwon(room.monthlyRentKrw) },
         { label: "관리비", value: formatKrw(room.maintenanceFeeKrw) },
         { label: "공과금 포함", value: booleanLabel(room.utilityIncluded) },
         { label: "인터넷 포함", value: booleanLabel(room.internetIncluded) },

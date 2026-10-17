@@ -116,13 +116,13 @@ export async function updateRoomCore(
 ): Promise<AdminActionResult> {
   return runAdminMutationAction("ROM-12", ({ mutate }) => {
     const parsed = roomCoreUpdateFormSchema.safeParse({
-      monthlyRentKrw: formData.get("monthlyRentKrw"),
+      monthlyRentManwon: formData.get("monthlyRentManwon"),
       depositKrw: formData.get("depositKrw"),
       maintenanceFeeKrw: formData.get("maintenanceFeeKrw"),
       description: formData.get("description"),
     });
     if (!parsed.success) {
-      return adminActionFailure("가격과 설명 입력값을 확인해 주세요.");
+      return adminActionFailure("월세는 0 초과 10,000만원 이하로 소수점 4자리까지 입력해 주세요. 보증금·관리비는 원 단위 정수, 설명은 2,000자 이하로 입력해 주세요.");
     }
     return mutateRoom(
       {

@@ -5,6 +5,7 @@ import {
   displayValue,
   formatDate,
   formatKrw,
+  formatMonthlyRentManwon,
   listLabel,
   registrationValueLabel,
   registrationValueListLabel,
@@ -77,7 +78,7 @@ export function RegistrationRoomDetail({ room }: RegistrationRoomDetailProps) {
         { label: "추가 안내", value: displayValue(data.preferences.additionalGuidance) },
       ]} title="선호 조건" />
       <DetailSection id="pricing-heading" items={[
-        { label: "월세", value: formatKrw(data.pricing.monthlyRentKrw) },
+        { label: "월세", value: formatMonthlyRentManwon(data.pricing.monthlyRentKrw) },
         { label: "보증금", value: formatKrw(data.pricing.depositKrw) },
         { label: "관리비", value: formatKrw(data.pricing.maintenanceFeeKrw) },
         { label: "입주 가능일", value: formatDate(data.pricing.moveInAvailableAt) },
