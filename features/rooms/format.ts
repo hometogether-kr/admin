@@ -20,6 +20,18 @@ export function formatKrw(value: number | null): string {
   return `${new Intl.NumberFormat("ko-KR").format(value)}원`;
 }
 
+export function krwToManwonInput(value: number | null): string {
+  if (value === null) return "";
+  const whole = Math.trunc(value / 10_000);
+  const fraction = String(value % 10_000).padStart(4, "0").replace(/0+$/, "");
+  return fraction === "" ? String(whole) : `${whole}.${fraction}`;
+}
+
+export function formatMonthlyRentManwon(value: number | null): string {
+  if (value === null) return "—";
+  return `${new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 4 }).format(value / 10_000)}만원`;
+}
+
 export function listLabel(values: readonly string[]): string {
   return values.length === 0 ? "—" : values.join(", ");
 }

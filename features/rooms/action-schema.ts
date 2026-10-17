@@ -25,15 +25,25 @@ const currencyStringSchema = (minimum: number, maximum: number) => z.string()
   .transform(Number)
   .pipe(z.number().int().min(minimum).max(maximum));
 
+const monthlyRentManwonSchema = z.string().trim().max(32)
+  .regex(/^\d+(?:\.\d{1,4})?$/)
+  .transform((value) => {
+    const [whole, fraction = ""] = value.split(".");
+    return Number(whole) * 10_000 + Number(fraction.padEnd(4, "0"));
+  })
+  .pipe(z.number().int().min(1).max(100_000_000));
+
 export const roomCoreUpdateFormSchema = z.strictObject({
-  monthlyRentKrw: currencyStringSchema(1, 100_000_000),
+  monthlyRentManwon: monthlyRentManwonSchema,
   depositKrw: currencyStringSchema(0, 1_000_000_000),
   maintenanceFeeKrw: currencyStringSchema(0, 1_000_000_000),
   description: z.preprocess(
     (value) => typeof value === "string" && value.trim() === "" ? null : value,
     z.string().trim().max(2_000).nullable(),
   ),
-});
+}).transform(({ monthlyRentManwon, ...values }) => ({
+  ...values, monthlyRentKrw: monthlyRentManwon,
+}));
 
 const nullableFormText = (maxLength: number) => z.string().trim().max(maxLength)
   .transform((value) => value === "" ? null : value);
