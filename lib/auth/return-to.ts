@@ -27,6 +27,7 @@ const LIST_ROUTE_RULES: readonly ListRouteRule[] = [
     queryKeys: ["regionType", "housingType", "status", "page", "limit"],
   },
   { path: "/notification-logs", queryKeys: ["page", "limit"] },
+  { path: "/guest-region-requests", queryKeys: ["page", "limit"] },
 ] as const;
 
 const DETAIL_PATH_PATTERN = /^\/(?:users|rooms|reservations|contracts|payments|reports|supports|host-consultations|notification-logs)\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;

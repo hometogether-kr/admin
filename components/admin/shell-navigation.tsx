@@ -9,6 +9,7 @@ import {
   FlagIcon,
   HouseLineIcon,
   ListIcon,
+  MapPinIcon,
   PhoneCallIcon,
   UsersIcon,
   XIcon,
@@ -36,6 +37,7 @@ const SHELL_MENU_ICONS = {
   reports: FlagIcon,
   supports: ChatsCircleIcon,
   hostConsultations: PhoneCallIcon,
+  guestRegionRequests: MapPinIcon,
   notificationLogs: BellRingingIcon,
 } as const;
 
