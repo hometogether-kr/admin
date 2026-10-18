@@ -47,8 +47,8 @@ export function RoomCoreEditForm({
         <RoomMutationCompletion result={result} roomId={roomId} />
         <fieldset className="contents" disabled={pending || mutation.busy}>
           <Input defaultValue={krwToManwonInput(monthlyRentKrw)} id="room-monthly-rent" label="월세(만원)" max={10_000} min={0.0001} name="monthlyRentManwon" required step={0.0001} type="number" />
-          <Input defaultValue={depositKrw ?? ""} id="room-deposit" label="보증금(원)" max={1_000_000_000} min={0} name="depositKrw" required step={1} type="number" />
-          <Input defaultValue={maintenanceFeeKrw ?? ""} id="room-maintenance-fee" label="관리비(원)" max={1_000_000_000} min={0} name="maintenanceFeeKrw" required step={1} type="number" />
+          <Input defaultValue={krwToManwonInput(depositKrw)} id="room-deposit" label="보증금(만원)" max={100_000} min={0} name="depositManwon" required step={0.0001} type="number" />
+          <Input defaultValue={krwToManwonInput(maintenanceFeeKrw)} id="room-maintenance-fee" label="관리비(만원)" max={100_000} min={0} name="maintenanceFeeManwon" required step={0.0001} type="number" />
           <div className="sm:col-span-3">
             <Textarea defaultValue={description ?? ""} id="room-description" label="매물 설명" maxLength={2_000} name="description" />
           </div>

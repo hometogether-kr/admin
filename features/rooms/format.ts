@@ -27,7 +27,7 @@ export function krwToManwonInput(value: number | null): string {
   return fraction === "" ? String(whole) : `${whole}.${fraction}`;
 }
 
-export function formatMonthlyRentManwon(value: number | null): string {
+export function formatManwon(value: number | null): string {
   if (value === null) return "—";
   return `${new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 4 }).format(value / 10_000)}만원`;
 }

@@ -4,8 +4,7 @@ import {
   booleanLabel,
   displayValue,
   formatDate,
-  formatKrw,
-  formatMonthlyRentManwon,
+  formatManwon,
   listLabel,
   registrationValueLabel,
   registrationValueListLabel,
@@ -78,9 +77,9 @@ export function RegistrationRoomDetail({ room }: RegistrationRoomDetailProps) {
         { label: "추가 안내", value: displayValue(data.preferences.additionalGuidance) },
       ]} title="선호 조건" />
       <DetailSection id="pricing-heading" items={[
-        { label: "월세", value: formatMonthlyRentManwon(data.pricing.monthlyRentKrw) },
-        { label: "보증금", value: formatKrw(data.pricing.depositKrw) },
-        { label: "관리비", value: formatKrw(data.pricing.maintenanceFeeKrw) },
+        { label: "월세", value: formatManwon(data.pricing.monthlyRentKrw) },
+        { label: "보증금", value: formatManwon(data.pricing.depositKrw) },
+        { label: "관리비", value: formatManwon(data.pricing.maintenanceFeeKrw) },
         { label: "입주 가능일", value: formatDate(data.pricing.moveInAvailableAt) },
         { label: "최소 거주", value: `${data.pricing.minStayMonths}개월` },
       ]} title="가격" />
