@@ -15,6 +15,7 @@ export type AdminOperationDomain =
   | "reports"
   | "supports"
   | "hostConsultations"
+  | "guestRegionRequests"
   | "notificationLogs";
 
 export type AdminOperationContract = {
@@ -35,6 +36,7 @@ export type AdminOperationContract = {
 };
 
 export const ADMIN_OPERATIONS = [
+  { id: "GRR-01", domain: "guestRegionRequests", method: "GET", path: "/admin/guest-region-requests", roles: ["cs", "super"], successStatus: 200, response: "{items,total,page,limit,totalPages}", query: ["page", "limit"], body: [], requestSource: "local-controller-supplement", rolesSource: "local-controller" },
   { id: "USR-01", domain: "users", method: "GET", path: "/admin/users", roles: ["super"], successStatus: 200, response: "AdminUserSummary[]", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },
   { id: "USR-02", domain: "users", method: "GET", path: "/admin/users/{id}", roles: ["super"], successStatus: 200, response: "AdminUserDetail", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },
   { id: "USR-03", domain: "users", method: "POST", path: "/admin/users/{id}/disablements", roles: ["super"], successStatus: 201, response: "{success:boolean}", query: [], body: [], requestSource: "not-applicable", rolesSource: "local-controller" },
