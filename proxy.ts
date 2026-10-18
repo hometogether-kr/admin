@@ -33,6 +33,7 @@ export const config = {
     "/reports/:path*",
     "/supports/:path*",
     "/host-consultations/:path*",
+    "/guest-region-requests/:path*",
     "/notification-logs/:path*",
   ],
 };
