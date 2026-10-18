@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { DefinitionList } from "@/components/ui/definition-list";
 import { MediaDeleteAction } from "@/features/rooms/components/media-delete-action";
+import { RoomPhotoPreview } from "@/features/rooms/components/room-photo-preview";
 import { booleanLabel, formatDate } from "@/features/rooms/format";
 import type { RoomMedia } from "@/features/rooms/registration-schema";
 
@@ -14,15 +15,15 @@ export function MediaSection({ media, roomId }: MediaSectionProps) {
     <section aria-labelledby="room-media-heading" className="grid gap-3">
       <div className="grid gap-1">
         <h2 className="text-section font-semibold text-ink-strong" id="room-media-heading">
-          미디어
+          방 사진
         </h2>
         <p className="admin-keep-words text-body text-ink-subtle">
-          삭제 후 사진 목록과 대표 표시를 갱신합니다. 마지막 사진은 삭제할 수 없습니다.
+          사진을 누르면 크게 볼 수 있습니다. 삭제 후 사진 목록과 대표 표시를 갱신하며, 마지막 사진은 삭제할 수 없습니다.
         </p>
       </div>
       {media.length === 0 ? (
         <p className="rounded-panel border border-dashed border-line bg-surface-subtle p-4 text-body text-ink-subtle">
-          등록된 미디어가 없습니다.
+          등록된 방 사진이 없습니다.
         </p>
       ) : (
         <div className="grid gap-3 lg:grid-cols-2">
@@ -37,6 +38,7 @@ export function MediaSection({ media, roomId }: MediaSectionProps) {
                 </div>
                 {item.isRepresentative ? <Badge variant="accent">대표</Badge> : null}
               </div>
+              <RoomPhotoPreview media={item} />
               <DefinitionList items={[
                 { label: "표시 순서", value: item.displayOrder },
                 { label: "대표 여부", value: booleanLabel(item.isRepresentative) },
