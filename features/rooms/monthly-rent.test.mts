@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { roomCoreUpdateFormSchema } from "./action-schema";
-import { formatMonthlyRentManwon, krwToManwonInput } from "./format";
+import { formatManwon, krwToManwonInput } from "./format";
 
 const coreInput = {
-  depositKrw: "10000000", maintenanceFeeKrw: "50000", description: "수정한 설명",
+  depositManwon: "1000", maintenanceFeeManwon: "5", description: "수정한 설명",
 };
 
 for (const [monthlyRentManwon, monthlyRentKrw] of [
@@ -35,11 +35,11 @@ for (const krw of [1, 50, 9999, 10000, 500000, 500001, 505000, 99999999, 1000000
 }
 
 test("월세를 만원 단위로 표시하며 누락값과 0원을 구분한다", () => {
-  assert.equal(formatMonthlyRentManwon(500000), "50만원");
-  assert.equal(formatMonthlyRentManwon(505000), "50.5만원");
-  assert.equal(formatMonthlyRentManwon(500001), "50.0001만원");
-  assert.equal(formatMonthlyRentManwon(100000000), "10,000만원");
-  assert.equal(formatMonthlyRentManwon(0), "0만원");
-  assert.equal(formatMonthlyRentManwon(null), "—");
+  assert.equal(formatManwon(500000), "50만원");
+  assert.equal(formatManwon(505000), "50.5만원");
+  assert.equal(formatManwon(500001), "50.0001만원");
+  assert.equal(formatManwon(100000000), "10,000만원");
+  assert.equal(formatManwon(0), "0만원");
+  assert.equal(formatManwon(null), "—");
   assert.equal(krwToManwonInput(null), "");
 });

@@ -3,8 +3,7 @@ import {
   booleanLabel,
   displayValue,
   formatDate,
-  formatKrw,
-  formatMonthlyRentManwon,
+  formatManwon,
   listLabel,
 } from "@/features/rooms/format";
 import type { LegacyRoom } from "@/features/rooms/legacy-schema";
@@ -38,9 +37,9 @@ export function LegacyRoomDetail({ room }: LegacyRoomDetailProps) {
         { label: "최대 거주", value: room.maxStayMonths === null ? "—" : `${room.maxStayMonths}개월` },
       ]} title="입주 조건" />
       <DetailSection id="legacy-pricing-heading" items={[
-        { label: "보증금", value: formatKrw(room.depositKrw) },
-        { label: "월세", value: formatMonthlyRentManwon(room.monthlyRentKrw) },
-        { label: "관리비", value: formatKrw(room.maintenanceFeeKrw) },
+        { label: "보증금", value: formatManwon(room.depositKrw) },
+        { label: "월세", value: formatManwon(room.monthlyRentKrw) },
+        { label: "관리비", value: formatManwon(room.maintenanceFeeKrw) },
         { label: "공과금 포함", value: booleanLabel(room.utilityIncluded) },
         { label: "인터넷 포함", value: booleanLabel(room.internetIncluded) },
       ]} title="가격" />
