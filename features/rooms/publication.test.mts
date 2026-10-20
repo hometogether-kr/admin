@@ -44,9 +44,19 @@ test("확인자가 없거나 필수 주소가 부족하면 확인일이 있어�
   assert.equal(typeof forms.getRoomPublicationState, "function");
   const fixture = room("hidden");
   if (fixture.registrationContractVersion !== 2) throw new Error("Expected v2");
-  for (const patch of [{ addressVerifiedBy: null }, { legalDongCode: null }, { sido: null }, { buildingType: "villa" as const }]) {
+  for (const patch of [{ addressVerifiedBy: null }, { sido: null }, { buildingType: "villa" as const }]) {
     assert.equal(forms.getRoomPublicationState({ ...fixture, data: { ...fixture.data,
       location: { ...fixture.data.location, ...patch },
     } }).canPublish, false);
+  }
+});
+
+test("법정동이 없어도 주소 확인된 매물의 게시·재게시를 허용한다", () => {
+  for (const status of ["submitted", "inReview", "hidden"]) {
+    const fixture = room(status);
+    if (fixture.registrationContractVersion !== 2) throw new Error("Expected v2");
+    fixture.data.location.legalDongName = null;
+    fixture.data.location.legalDongCode = null;
+    assert.equal(forms.getRoomPublicationState(fixture).canPublish, true);
   }
 });

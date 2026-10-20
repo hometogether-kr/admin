@@ -31,8 +31,6 @@ export function RegistrationRoomDetail({ room }: RegistrationRoomDetailProps) {
         { label: "지역", value: displayValue(data.location.addressRegion) },
         { label: "시·도", value: displayValue(data.location.sido) },
         { label: "시·군·구", value: displayValue(data.location.sigungu) },
-        { label: "법정동", value: displayValue(data.location.legalDongName) },
-        { label: "법정동 코드", value: displayValue(data.location.legalDongCode) },
         { label: "건물 동", value: displayValue(data.location.buildingDong) },
         { label: "호수", value: displayValue(data.location.unitNumber) },
         { label: "층수", value: displayValue(data.location.floor) },

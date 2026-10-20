@@ -96,7 +96,7 @@ export function adminApiFailureResult(error: AdminApiError): AdminActionError {
         case "ROOM_ADMIN_EDIT_NOT_ALLOWED":
           return adminActionFailure("제출된 등록 계약 v2 매물만 주소·메타데이터를 수정할 수 있습니다.");
         case "ROOM_ADDRESS_INCOMPLETE":
-          return adminActionFailure("주소 확인에 필요한 주소·시도·시군구·법정동·코드와 건물 유형을 보완해 주세요.");
+          return adminActionFailure("주소 확인에 필요한 주소·시도·시군구와 건물 유형을 보완해 주세요.");
         case "ROOM_ADDRESS_REGION_MISMATCH":
           return adminActionFailure("도로명 또는 지번 주소와 시도·시군구가 일치하도록 보정해 주세요.");
         case "ROOM_ACTIVE_RESERVATIONS_EXIST":

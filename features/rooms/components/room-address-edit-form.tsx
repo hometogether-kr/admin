@@ -27,8 +27,6 @@ const ADDRESS_TEXT_FIELDS = [
   { name: "addressJibun", label: "지번 주소", maxLength: 255 },
   { name: "sido", label: "시·도", maxLength: 100 },
   { name: "sigungu", label: "시·군·구", maxLength: 100 },
-  { name: "legalDongName", label: "법정동", maxLength: 100 },
-  { name: "legalDongCode", label: "법정동 코드", maxLength: 10 },
   { name: "buildingDong", label: "건물 동", maxLength: 100 },
   { name: "unitNumber", label: "호수", maxLength: 100 },
   { name: "addressDetail", label: "상세 주소", maxLength: 255 },
@@ -94,7 +92,7 @@ export function RoomAddressEditForm({ roomId, location }: RoomAddressEditFormPro
   return (
     <section aria-labelledby="room-address-heading" className="grid gap-4 border-t border-line-subtle pt-6">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-section font-semibold text-ink-strong" id="room-address-heading">주소·법정동</h2>
+        <h2 className="text-section font-semibold text-ink-strong" id="room-address-heading">주소</h2>
         <Badge variant={!dirty && verified ? "success" : "warning"}>{dirty ? "변경사항 저장 필요" : verified ? "주소 확인 완료" : "주소 미확인"}</Badge>
         {verified ? <span className="text-compact text-ink-subtle">확인일 {formatDate(location.addressVerifiedAt)}</span> : null}
       </div>
@@ -108,7 +106,6 @@ export function RoomAddressEditForm({ roomId, location }: RoomAddressEditFormPro
             <Input
               error={errors[name]} id={`room-${name}`} key={name}
               label={label} maxLength={maxLength} name={name} onChange={handleChange} value={values[name]}
-              {...(name === "legalDongCode" ? { inputMode: "numeric", pattern: "[0-9]{10}" } : {})}
             />
           ))}
           <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
@@ -134,15 +131,15 @@ export function RoomAddressEditForm({ roomId, location }: RoomAddressEditFormPro
       <div className="grid gap-3 border-t border-line-subtle pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
         <div className="text-body text-ink-subtle">
           {dirty ? "저장하지 않은 변경 사항이 있습니다. 먼저 주소를 저장한 뒤 확인을 완료해 주세요." : !readyToVerify
-            ? "주소 확인에 필요한 도로명 또는 지번 주소, 시·도, 시·군·구, 법정동·코드 및 건물 유형을 확인해 주세요."
+            ? "주소 확인에 필요한 도로명 또는 지번 주소, 시·도, 시·군·구 및 건물 유형을 확인해 주세요."
             : verified ? "주소 확인이 완료되었습니다. 게시 여부는 관리 작업에서 별도로 변경해 주세요." : "게시 전 주소 확인이 필요합니다. 주소 저장만으로 확인이 완료되지는 않습니다."}
         </div>
         <ConfirmedAction
           action={verifyRoomAddress.bind(null, roomId)} confirmLabel="주소 확인 완료"
-          description="저장된 주소와 법정동을 원본 자료와 대조했는지 확인해 주세요. 이 작업만으로 매물이 게시되지는 않습니다."
+          description="저장된 주소를 원본 자료와 대조했는지 확인해 주세요. 이 작업만으로 매물이 게시되지는 않습니다."
           disabled={dirty || !readyToVerify || verified || busy}
           id="room-address-verify-confirm" roomId={roomId}
-          title="주소·법정동 확인을 완료할까요?" triggerLabel="주소 확인 완료"
+          title="주소 확인을 완료할까요?" triggerLabel="주소 확인 완료"
         />
       </div>
     </section>
