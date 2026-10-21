@@ -57,7 +57,7 @@ export type RoomMetadataValues = z.output<typeof roomMetadataFormSchema>;
 
 export const ROOM_ADDRESS_FORM_FIELDS = [
   "buildingType", "buildingTypeOther", "addressRoad", "addressJibun", "addressDetail",
-  "legalDongCode", "legalDongName", "sido", "sigungu", "buildingDong", "unitNumber",
+  "sido", "sigungu", "buildingDong", "unitNumber",
   "latitude", "longitude",
 ] as const;
 
@@ -66,8 +66,7 @@ export const roomAddressFormSchema = z.strictObject({
   buildingTypeOther: nullableFormText(100),
   addressRoad: nullableFormText(255), addressJibun: nullableFormText(255),
   addressDetail: nullableFormText(255),
-  legalDongCode: nullableFormText(10).pipe(z.string().regex(/^\d{10}$/).nullable()),
-  legalDongName: nullableFormText(100), sido: nullableFormText(100), sigungu: nullableFormText(100),
+  sido: nullableFormText(100), sigungu: nullableFormText(100),
   buildingDong: nullableFormText(100), unitNumber: nullableFormText(100),
   latitude: nullableFormNumber(z.number().min(-90).max(90), /^-?(?:\d+(?:\.\d*)?|\.\d+)$/),
   longitude: nullableFormNumber(z.number().min(-180).max(180), /^-?(?:\d+(?:\.\d*)?|\.\d+)$/),
@@ -116,8 +115,7 @@ export function buildRoomAddressPatch(values: RoomAddressValues, original: Regis
 export function canVerifyRoomAddress(location: RegistrationLocation): boolean {
   const address = location.addressRoad ?? location.addressJibun;
   return Boolean(
-    location.sido && location.sigungu && location.legalDongName
-    && /^\d{10}$/.test(location.legalDongCode ?? "")
+    location.sido && location.sigungu
     && editableBuildingTypeSchema.safeParse(location.buildingType).success
     && address?.includes(location.sido) && address.includes(location.sigungu),
   );

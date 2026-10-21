@@ -12,8 +12,7 @@ function addressInput() {
   return {
     buildingType: "officetel", buildingTypeOther: "",
     addressRoad: location.addressRoad, addressJibun: location.addressJibun,
-    addressDetail: location.addressDetail, legalDongCode: location.legalDongCode,
-    legalDongName: location.legalDongName, sido: location.sido, sigungu: location.sigungu,
+    addressDetail: location.addressDetail, sido: location.sido, sigungu: location.sigungu,
     buildingDong: location.buildingDong, unitNumber: location.unitNumber,
     latitude: "37.56", longitude: "126.92",
   };
@@ -60,7 +59,6 @@ test("기타 유형은 설명 필수이며 다른 유형은 기타 설명을 제
 });
 
 for (const patch of [
-  { legalDongCode: "123" }, { legalDongCode: "11440124000" },
   { latitude: "37.56", longitude: "" }, { latitude: "", longitude: "126.92" },
   { latitude: "91" }, { longitude: "181" }, { latitude: "invalid" },
   { addressRoad: "a".repeat(256) },
@@ -85,10 +83,10 @@ test("좌표 하나를 수정해도 유효한 쌍을 전송하고 둘 다 비우
     { latitude: null, longitude: null });
 });
 
-test("주소 확인은 법정동 코드·지역·유효 유형과 일치하는 저장 주소가 있어야 한다", () => {
+test("주소 확인은 지역·유효 유형과 일치하는 저장 주소가 있어야 한다", () => {
   assert.ok(forms.canVerifyRoomAddress);
   assert.equal(forms.canVerifyRoomAddress(location), true);
-  for (const field of ["sido", "sigungu", "legalDongName", "legalDongCode"] as const) {
+  for (const field of ["sido", "sigungu"] as const) {
     assert.equal(forms.canVerifyRoomAddress({ ...location, [field]: null }), false);
   }
   assert.equal(forms.canVerifyRoomAddress({ ...location, buildingType: "villa" }), false);
@@ -117,4 +115,11 @@ test("신규 API 메서드·성공 코드·관리자 권한이 서버와 일치�
     assert.equal(operation.successStatus, 200);
     assert.deepEqual(operation.roles, ["room", "super"]);
   }
+});
+
+test("법정동 없이 주소를 확인하고 법정동 필드를 수정 요청에 포함하지 않는다", () => {
+  assert.equal(forms.canVerifyRoomAddress({ ...location, legalDongName: null, legalDongCode: null }), true);
+  assert.equal(forms.ROOM_ADDRESS_FORM_FIELDS.some((field: string) => field.startsWith("legalDong")), false);
+  const values = forms.roomAddressFormSchema.parse(addressInput());
+  assert.equal("legalDongName" in values, false);
 });

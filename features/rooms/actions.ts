@@ -96,7 +96,7 @@ export async function verifyRoomAddress(
   void _formData;
   return runAdminMutationAction("ROM-15", ({ mutate }) =>
     mutateRoom({
-      roomId, propertyResponse: true, successMessage: "주소·법정동 확인을 완료했습니다.",
+      roomId, propertyResponse: true, successMessage: "주소 확인을 완료했습니다.",
     }, mutate),
   );
 }

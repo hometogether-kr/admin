@@ -24,7 +24,7 @@ for (const [code, status, message] of [
   ["ROOM_PUBLICATION_NOT_ALLOWED", 409, "현재 매물 상태에서는 게시할 수 없습니다. 최신 상태를 확인해 주세요."],
   ["ROOM_HIDE_NOT_ALLOWED", 409, "공개 중인 게시 매물만 숨길 수 있습니다. 최신 상태를 확인해 주세요."],
   ["ROOM_ADMIN_EDIT_NOT_ALLOWED", 409, "제출된 등록 계약 v2 매물만 주소·메타데이터를 수정할 수 있습니다."],
-  ["ROOM_ADDRESS_INCOMPLETE", 400, "주소 확인에 필요한 주소·시도·시군구·법정동·코드와 건물 유형을 보완해 주세요."],
+  ["ROOM_ADDRESS_INCOMPLETE", 400, "주소 확인에 필요한 주소·시도·시군구와 건물 유형을 보완해 주세요."],
   ["ROOM_ADDRESS_REGION_MISMATCH", 400, "도로명 또는 지번 주소와 시도·시군구가 일치하도록 보정해 주세요."],
 ] as const) {
   test(`${code}를 검증하고 원문 대신 필요한 조치를 표시한다`, () => {
