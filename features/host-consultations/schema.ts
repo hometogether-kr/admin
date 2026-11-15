@@ -2,6 +2,8 @@ import "server-only";
 
 import { z } from "zod";
 
+import { hostFlyerAttributionSchema } from "@/features/marketing-attribution/schema";
+
 import { adminPaginatedSchema } from "@/lib/api/pagination-schema";
 import {
   HOST_CONSULTATION_HOUSING_TYPES,
@@ -29,6 +31,7 @@ export const hostConsultationSchema = z
     privacyConsentAgreedAt: z.iso.datetime(),
     privacyConsentVersion: z.string().min(1).max(80),
     source: z.string().min(1).max(80),
+    marketingAttribution: hostFlyerAttributionSchema.optional(),
     status: z.enum(HOST_CONSULTATION_STATUSES),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),

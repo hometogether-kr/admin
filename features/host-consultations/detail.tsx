@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { DefinitionList } from "@/components/ui/definition-list";
+import { HostFlyerAttributionPanel } from "@/features/marketing-attribution/panel";
 import {
   formatHostConsultationDateTime,
   hostConsultationHousingTypeLabel,
@@ -48,7 +49,7 @@ export function HostConsultationDetail({
               label: "처리 상태",
               value: <Badge variant={status.variant}>{status.label}</Badge>,
             },
-            { label: "신청 경로", value: consultation.source },
+            { label: "신청 경로", value: consultation.marketingAttribution ? "아파트 A4 광고지" : consultation.source },
             {
               label: "신청 시각",
               value: formatHostConsultationDateTime(consultation.createdAt),
@@ -60,6 +61,10 @@ export function HostConsultationDetail({
           ]}
         />
       </section>
+
+      {consultation.marketingAttribution && (
+        <HostFlyerAttributionPanel attribution={consultation.marketingAttribution} conversion="상담 접수 완료" />
+      )}
 
       <section aria-labelledby="consultation-property-title" className="grid gap-3">
         <h2
