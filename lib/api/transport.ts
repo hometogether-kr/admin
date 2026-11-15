@@ -84,6 +84,29 @@ async function responseFor(request: AdminTransportRequest): Promise<Response> {
   }
 }
 
+function omitMarketingAttribution(value: unknown): unknown {
+  if (typeof value !== "object" || value === null || !("marketingAttribution" in value)) {
+    return value;
+  }
+  const record: Record<string, unknown> = { ...value };
+  delete record["marketingAttribution"];
+  return record;
+}
+
+function normalizeLegacyReadPayload(operationId: AdminOperationId, payload: unknown): unknown {
+  // These API responses still include optional attribution after the CRM display was reverted.
+  if (operationId === "HCR-02" || operationId === "ROM-02") {
+    return omitMarketingAttribution(payload);
+  }
+  if (
+    operationId === "HCR-01" && typeof payload === "object" && payload !== null &&
+    "items" in payload && Array.isArray(payload.items)
+  ) {
+    return { ...payload, items: payload.items.map(omitMarketingAttribution) };
+  }
+  return payload;
+}
+
 export async function executeAdminJson<Schema extends z.ZodType>(
   input: {
     readonly request: AdminTransportRequest;
@@ -115,7 +138,7 @@ export async function executeAdminJson<Schema extends z.ZodType>(
     }
     throw cause;
   }
-  const parsed = input.responseSchema.safeParse(payload);
+  const parsed = input.responseSchema.safeParse(normalizeLegacyReadPayload(operation.id, payload));
   if (!parsed.success) {
     throw new AdminApiError({
       kind: "schema",
