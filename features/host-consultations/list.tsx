@@ -53,7 +53,6 @@ export function HostConsultationListView({
           </Link>
           <span className="text-label text-ink-subtle">
             {hostConsultationRegionTypeLabel(consultation.regionType)}
-            {consultation.marketingAttribution && " · 아파트 A4 광고지"}
           </span>
         </div>,
         <a

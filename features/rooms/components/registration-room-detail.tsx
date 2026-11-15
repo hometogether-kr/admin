@@ -1,4 +1,3 @@
-import { HostFlyerAttributionPanel } from "@/features/marketing-attribution/panel";
 import { DetailSection } from "@/features/rooms/components/detail-section";
 import { MediaSection } from "@/features/rooms/components/media-section";
 import {
@@ -22,9 +21,6 @@ export function RegistrationRoomDetail({ room }: RegistrationRoomDetailProps) {
         { label: "상세 주소 숨김", value: booleanLabel(room.isAddressDetailHidden) },
         { label: "내부 메모", value: displayValue(room.internalMemo) },
       ]} title="관리자 운영 정보" />
-      {room.marketingAttribution && (
-        <HostFlyerAttributionPanel attribution={room.marketingAttribution} conversion="방 등록 요청 완료" />
-      )}
       <DetailSection id="registrant-heading" items={[
         { label: "등록자 관계", value: registrationValueLabel(data.registrant.registrantRelationship) },
       ]} title="등록자" />
